@@ -185,7 +185,7 @@ public class SurveyUnitServiceImpl implements SurveyUnitService {
 		if (userId.equals(GUEST)) {
 			surveyUnitOpt = surveyUnitRepository.findById(id);
 		} else {
-			surveyUnitOpt = surveyUnitRepository.findByIdAndInterviewerIdIgnoreCase(id, userId);
+			surveyUnitOpt = surveyUnitRepository.findByIdAndInterviewerIdIgnoreCaseAndCampaignIdIgnoreCase(id, userId,surveyUnitDetailDto.getCampaign());
 		}
 		if (!surveyUnitOpt.isPresent()) {
 			LOGGER.error("Survey Unit {} not found in DB for interviewer {}", id, userId);

@@ -49,6 +49,13 @@ public interface SurveyUnitRepository extends JpaRepository<SurveyUnit, String> 
 	 * @return SurveyUnit
 	 */
 	Optional<SurveyUnit> findByIdAndInterviewerIdIgnoreCase(String id, String userId);
+	/**
+	 * This method retrieve the SurveyUnit in DB by Id and UserId and campaignId
+	 * @param id
+	 * @param userId
+	 * @return SurveyUnit
+	 */
+	Optional<SurveyUnit> findByIdAndInterviewerIdIgnoreCaseAndCampaignIdIgnoreCase(String id, String userId, String campaignId);
 
 	/**
 	 * This method retrieve all the Ids of the SurveyUnits in db
