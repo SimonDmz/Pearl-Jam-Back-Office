@@ -23,8 +23,8 @@
                 <constraints primaryKey="true" primaryKeyName="referentPK" />
             </column>
             <column name="campaign_id" type="VARCHAR(255)" />
-            <column name="firstname" type="VARCHAR(255)" />
-            <column name="lastname" type="VARCHAR(255)" />
+            <column name="first_name" type="VARCHAR(255)" />
+            <column name="last_name" type="VARCHAR(255)" />
             <column name="role" type="VARCHAR(255)" />
             <column name="phone_number" type="VARCHAR(255)" />
         </createTable>
