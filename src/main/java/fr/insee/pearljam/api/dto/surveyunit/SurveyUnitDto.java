@@ -59,22 +59,12 @@ public class SurveyUnitDto {
 	 * Start Date of the Campaign
 	 */
 	private Long endDate;
-	
+
 	private List<PersonDto> persons;
-	
+
 	private AddressDto address;
-	
-	/**
-	 * Default constructor from SurveyUnitDto
-	 * @param surveyUnit
-	 */
-	public SurveyUnitDto(SurveyUnit surveyUnit) {
-		this.id = surveyUnit.getId();
-		this.campaign = surveyUnit.getCampaign().getId();
-		this.campaignLabel = surveyUnit.getCampaign().getLabel();
-		this.collectionStartDate = surveyUnit.getCampaign().getStartDate();
-	}
-	public SurveyUnitDto() {
+
+public SurveyUnitDto() {
 	}
 	
 	public SurveyUnitDto(Optional<SurveyUnit> su, VisibilityDto visibility, Boolean extended) {
@@ -82,7 +72,6 @@ public class SurveyUnitDto {
 			this.id = su.get().getId();
 			this.campaign = su.get().getCampaign().getId();
 			this.campaignLabel = su.get().getCampaign().getLabel();
-			this.collectionStartDate = su.get().getCampaign().getStartDate();
 			this.managementStartDate=visibility.getManagementStartDate();
 			this.interviewerStartDate=visibility.getInterviewerStartDate();
 			this.identificationPhaseStartDate=visibility.getIdentificationPhaseStartDate();

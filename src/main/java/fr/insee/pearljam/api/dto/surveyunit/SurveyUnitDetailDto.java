@@ -16,7 +16,6 @@ import fr.insee.pearljam.api.dto.address.AddressDto;
 import fr.insee.pearljam.api.dto.comment.CommentDto;
 import fr.insee.pearljam.api.dto.contactattempt.ContactAttemptDto;
 import fr.insee.pearljam.api.dto.contactoutcome.ContactOutcomeDto;
-import fr.insee.pearljam.api.dto.geographicallocation.GeographicalLocationDto;
 import fr.insee.pearljam.api.dto.person.PersonDto;
 import fr.insee.pearljam.api.dto.sampleidentifier.SampleIdentifiersDto;
 import fr.insee.pearljam.api.dto.state.StateDto;
@@ -26,7 +25,6 @@ public class SurveyUnitDetailDto {
 	private String id;
 	private List<PersonDto> persons;
 	private AddressDto address;
-	private GeographicalLocationDto geographicalLocation;
 	private Boolean priority;
 	private String campaign;
 	private List<CommentDto> comments;
@@ -46,9 +44,6 @@ public class SurveyUnitDetailDto {
 		this.priority=surveyUnit.isPriority();
 		this.campaign=surveyUnit.getCampaign().getId();
 		this.address = new AddressDto(surveyUnit.getAddress());
-		if(surveyUnit.getAddress().getGeographicalLocation()!=null) {
-			this.geographicalLocation = new GeographicalLocationDto(surveyUnit.getAddress().getGeographicalLocation());
-		}
 		if(surveyUnit.getSampleIdentifier()!=null) {
 			this.sampleIdentifiers = new SampleIdentifiersDto(surveyUnit.getSampleIdentifier());
 		}
@@ -92,20 +87,6 @@ public class SurveyUnitDetailDto {
 	 */
 	public void setAddress(AddressDto address) {
 		this.address = address;
-	}
-
-	/**
-	 * @return the geographicalLocation
-	 */
-	public GeographicalLocationDto getGeographicalLocation() {
-		return geographicalLocation;
-	}
-
-	/**
-	 * @param geographicalLocation the geographicalLocation to set
-	 */
-	public void setGeographicalLocation(GeographicalLocationDto geographicalLocation) {
-		this.geographicalLocation = geographicalLocation;
 	}
 
 	/**
@@ -218,10 +199,14 @@ public class SurveyUnitDetailDto {
 	@Override
 	public String toString() {
 		return "SurveyUnitDetailDto [id=" + id
-				+ ", address=" + address + ", geographicalLocation="
-				+ geographicalLocation + ", priority=" + priority + ", campaign=" + campaign + ", comments=" + comments
-				+ ", sampleIdentifiers=" + sampleIdentifiers + ", states=" + states
-				+ ", contactAttempts=" + contactAttempts + ", contactOutcome=" + contactOutcome + "]";
+				+ ", address=" + address
+				+ ", priority=" + priority 
+				+ ", campaign=" + campaign 
+				+ ", comments=" + comments
+				+ ", sampleIdentifiers=" + sampleIdentifiers 
+				+ ", states=" + states
+				+ ", contactAttempts=" + contactAttempts 
+				+ ", contactOutcome=" + contactOutcome + "]";
 	}
 	
 	/**
@@ -232,7 +217,7 @@ public class SurveyUnitDetailDto {
 	public boolean isValid() {
 		return (StringUtils.isNotBlank(this.id) 
 				&& StringUtils.isNotBlank(this.campaign) 
-				&& (this.states != null && !this.states.isEmpty()) && this.address != null && this.geographicalLocation != null 
+				&& (this.states != null && !this.states.isEmpty()) && this.address != null
 				&& this.sampleIdentifiers != null && this.priority != null);
 	}
 

@@ -131,11 +131,11 @@ public class SurveyUnit implements Serializable {
 		this.interviewer = interviewer;
 	}
 
-	public SurveyUnit(SurveyUnitContextDto su, OrganizationUnit organizationUnit, Campaign campaign, GeographicalLocation gl) {
+	public SurveyUnit(SurveyUnitContextDto su, OrganizationUnit organizationUnit, Campaign campaign) {
 		this.id = su.getId();
 		this.priority = su.getPriority();
 		this.viewed = false;
-		this.address = new InseeAddress(su.getAddress(), gl);
+		this.address = new InseeAddress(su.getAddress());
 		this.sampleIdentifier = new InseeSampleIdentifier(su.getSampleIdentifiers());
 		this.campaign = campaign;
 		this.interviewer = null;

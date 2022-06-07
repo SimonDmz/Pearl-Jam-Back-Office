@@ -82,9 +82,8 @@ public class InseeAddress extends Address {
 	/**
 	 * Constructor for the entity
 	 * @param address
-	 * @param geographicalLocation
 	 */
-	public InseeAddress(AddressDto address, GeographicalLocation geographicalLocation) {
+	public InseeAddress(AddressDto address) {
 		this.l1 = address.getL1();
 		this.l2 = address.getL2();
 		this.l3 = address.getL3();
@@ -92,7 +91,6 @@ public class InseeAddress extends Address {
 		this.l5 = address.getL5();
 		this.l6 = address.getL6();
 		this.l7 = address.getL7();
-		this.geographicalLocation = geographicalLocation;
 	}
 	/**
 	 * @return the line 1
@@ -178,7 +176,4 @@ public class InseeAddress extends Address {
 	public void setL7(String l7) {
 		this.l7 = l7;
 	}
-	
-	
-	
 }

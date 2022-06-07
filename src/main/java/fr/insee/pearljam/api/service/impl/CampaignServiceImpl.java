@@ -23,7 +23,6 @@ import fr.insee.pearljam.api.domain.Visibility;
 import fr.insee.pearljam.api.domain.VisibilityId;
 import fr.insee.pearljam.api.dto.campaign.CampaignContextDto;
 import fr.insee.pearljam.api.dto.campaign.CampaignDto;
-import fr.insee.pearljam.api.dto.campaign.CollectionDatesDto;
 import fr.insee.pearljam.api.dto.count.CountDto;
 import fr.insee.pearljam.api.dto.interviewer.InterviewerDto;
 import fr.insee.pearljam.api.dto.organizationunit.OrganizationUnitDto;
@@ -256,34 +255,6 @@ public class CampaignServiceImpl implements CampaignService {
 		return (campaignRepository.checkCampaignPreferences(userId, campaignId).isEmpty()) || "GUEST".equals(userId);
 	}
 
-	@Override
-	public HttpStatus updateDates(String userId, String id, CollectionDatesDto campaign) {
-		HttpStatus returnStatus = HttpStatus.BAD_REQUEST;
-		Optional<Campaign> camp = campaignRepository.findByIdIgnoreCase(id);
-		if (camp.isPresent()) {
-			Campaign currentCampaign = camp.get();
-			if (campaign.getEndDate() != null) {
-				LOGGER.info("Updating collection end date for campaign {}", id);
-				currentCampaign.setEndDate(campaign.getEndDate());
-				returnStatus = HttpStatus.OK;
-			}
-			if (campaign.getStartDate() != null) {
-				LOGGER.info("Updating collection start date for campaign {}", id);
-				currentCampaign.setStartDate(campaign.getStartDate());
-				returnStatus = HttpStatus.OK;
-			}
-			campaignRepository.save(currentCampaign);
-		} else {
-			LOGGER.error("Campaign {} does not exist in db", id);
-			returnStatus = HttpStatus.NOT_FOUND;
-		}
-		
-		if (returnStatus == HttpStatus.BAD_REQUEST) {
-			LOGGER.error("No field endate or start date found in body");
-		}
-
-		return returnStatus;
-	}
 
 	@Override
 	public CountDto getNbSUAbandonedByCampaign(String userId, String campaignId) throws NotFoundException {

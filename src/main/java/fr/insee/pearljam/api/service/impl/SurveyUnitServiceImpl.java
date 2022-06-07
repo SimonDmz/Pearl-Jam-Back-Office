@@ -77,9 +77,6 @@ public class SurveyUnitServiceImpl implements SurveyUnitService {
 	StateRepository stateRepository;
 
 	@Autowired
-	GeographicalLocationRepository geographicalLocationRepository;
-
-	@Autowired
 	InterviewerRepository interviewerRepository;
 
 	@Autowired
@@ -337,8 +334,7 @@ public class SurveyUnitServiceImpl implements SurveyUnitService {
 			InseeAddress inseeAddress;
 			Optional<InseeAddress> optionalInseeAddress = addressRepository.findById(surveyUnit.getAddress().getId());
 			if (!optionalInseeAddress.isPresent()) {
-				inseeAddress = new InseeAddress(surveyUnitDetailDto.getAddress(),
-						surveyUnit.getAddress().getGeographicalLocation());
+				inseeAddress = new InseeAddress(surveyUnitDetailDto.getAddress());
 			} else {
 				inseeAddress = optionalInseeAddress.get();
 				inseeAddress.setL1(surveyUnitDetailDto.getAddress().getL1());
@@ -557,11 +553,6 @@ public class SurveyUnitServiceImpl implements SurveyUnitService {
 				.map(SurveyUnitContextDto::getCampaign)
 				.collect(Collectors.toList())
 			).stream().collect(Collectors.toMap(Campaign::getId, c -> c));
-		Map<String, GeographicalLocation> mapGeographicalLocations = geographicalLocationRepository.findAllById(
-				surveyUnits.stream()
-				.map(SurveyUnitContextDto::getGeographicalLocationId)
-				.collect(Collectors.toList())
-			).stream().collect(Collectors.toMap(GeographicalLocation::getId, gl -> gl));
 		Map<String, OrganizationUnit> mapOrganizationUnits = organizationUnitRepository.findAllById(
 				surveyUnits.stream()
 				.map(SurveyUnitContextDto::getOrganizationUnitId)
@@ -575,13 +566,12 @@ public class SurveyUnitServiceImpl implements SurveyUnitService {
 			if (surveyUnitsDb.contains(su.getId())) {
 				duplicates.put(su.getId(), duplicates.get(su.getId()) + 1);
 			}
-			if (!su.isValid() 
+			if (!su.isValid()
 					|| !mapOrganizationUnits.containsKey(su.getOrganizationUnitId())
-					|| !mapCampaigns.containsKey(su.getCampaign())
-					|| !mapGeographicalLocations.containsKey(su.getGeographicalLocationId())) {
+					|| !mapCampaigns.containsKey(su.getCampaign())) {
 				surveyUnitErrors.add(su.getId());
 			}
-			listSurveyUnits.add(new SurveyUnit(su, mapOrganizationUnits.get(su.getOrganizationUnitId()), mapCampaigns.get(su.getCampaign()), mapGeographicalLocations.get(su.getGeographicalLocationId())));
+			listSurveyUnits.add(new SurveyUnit(su, mapOrganizationUnits.get(su.getOrganizationUnitId()), mapCampaigns.get(su.getCampaign())));
 		});
 		// Check attributes are not null
 		if (!surveyUnitErrors.isEmpty()) {

@@ -79,7 +79,6 @@ import fr.insee.pearljam.api.dto.campaign.CampaignContextDto;
 import fr.insee.pearljam.api.dto.comment.CommentDto;
 import fr.insee.pearljam.api.dto.contactattempt.ContactAttemptDto;
 import fr.insee.pearljam.api.dto.contactoutcome.ContactOutcomeDto;
-import fr.insee.pearljam.api.dto.geographicallocation.GeographicalLocationDto;
 import fr.insee.pearljam.api.dto.interviewer.InterviewerContextDto;
 import fr.insee.pearljam.api.dto.message.MessageDto;
 import fr.insee.pearljam.api.dto.organizationunit.OrganizationUnitContextDto;
@@ -99,7 +98,6 @@ import fr.insee.pearljam.api.exception.NotFoundException;
 import fr.insee.pearljam.api.exception.SurveyUnitException;
 import fr.insee.pearljam.api.repository.CampaignRepository;
 import fr.insee.pearljam.api.repository.ClosingCauseRepository;
-import fr.insee.pearljam.api.repository.GeographicalLocationRepository;
 import fr.insee.pearljam.api.repository.InterviewerRepository;
 import fr.insee.pearljam.api.repository.MessageRepository;
 import fr.insee.pearljam.api.repository.OrganizationUnitRepository;
@@ -138,9 +136,6 @@ class TestAuthKeyCloak {
 	@Autowired
 	CampaignRepository campaignRepository;
 
-	@Autowired
-	GeographicalLocationRepository geographicalLocationRepository;
-  
 	@Autowired
 	VisibilityRepository visibilityRepository;
 	
@@ -655,8 +650,6 @@ class TestAuthKeyCloak {
 		.assertThat().body("address.l5", equalTo("")).and()
 		.assertThat().body("address.l6", equalTo("29270 Carhaix")).and()
 		.assertThat().body("address.l7", equalTo("France")).and()
-		.assertThat().body("geographicalLocation.id", equalTo("29024")).and()
-		.assertThat().body("geographicalLocation.label", equalTo("CARHAIX PLOUGUER")).and()
 		.assertThat().body("campaign", equalTo("SIMPSONS2020X00")).and()
 		.assertThat().body("contactOutcome", nullValue()).and()
 		.assertThat().body("comments", empty()).and()
@@ -983,106 +976,6 @@ class TestAuthKeyCloak {
 		.when().get("api/campaign/test/survey-units/not-attributed")
 		.then()
 		.statusCode(404);
-  }
-  
-  /**
-	 * Test that the PUT endpoint "api/campaign/{id}/collection-dates"
-	 * return 200 when modifying both dates
-	 * @throws InterruptedException
-	 */
-	@Test
-	@Order(24)
-	void testPutCollectionDatesModifyBothDates() throws InterruptedException, JsonProcessingException, JSONException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "abc", "a");
-		 given().auth().oauth2(accessToken)
-		 	.contentType("application/json")
-			.body("{\"startDate\": 162849200000, \"endDate\": 170849200000}")
-		.when()
-			.put("api/campaign/SIMPSONS2020X00/collection-dates")
-		.then()
-      .statusCode(200);
-    Optional<Campaign> simpsons = campaignRepository.findByIdIgnoreCase("SIMPSONS2020X00");
-    assertEquals(true, simpsons.isPresent());
-    assertEquals(162849200000L, simpsons.get().getStartDate());
-    assertEquals(170849200000L, simpsons.get().getEndDate());
-  }
-  
-  /**
-	 * Test that the PUT endpoint "api/campaign/{id}/collection-dates"
-	 * return 200 when modifying start date
-	 * @throws InterruptedException
-	 */
-	@Test
-	@Order(25)
-	void testPutCollectionDatesModifyStartDate() throws InterruptedException, JsonProcessingException, JSONException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "abc", "a");
-		 given().auth().oauth2(accessToken)
-		 	.contentType("application/json")
-			.body("{\"startDate\": 162849200000}")
-		.when()
-			.put("api/campaign/SIMPSONS2020X00/collection-dates")
-		.then()
-      .statusCode(200);
-    Optional<Campaign> simpsons = campaignRepository.findByIdIgnoreCase("SIMPSONS2020X00");
-    assertEquals(true, simpsons.isPresent());
-    assertEquals(162849200000L, simpsons.get().getStartDate());
-  }
-  
-  /**
-	 * Test that the PUT endpoint "api/campaign/{id}/collection-dates"
-	 * return 200 when modifying end date
-	 * @throws InterruptedException
-	 */
-	@Test
-	@Order(26)
-	void testPutCollectionDatesModifyEndDate() throws InterruptedException, JsonProcessingException, JSONException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "abc", "a");
-		 given().auth().oauth2(accessToken)
-		 	.contentType("application/json")
-			.body("{\"endDate\": 170849200000}")
-		.when()
-			.put("api/campaign/SIMPSONS2020X00/collection-dates")
-		.then()
-      .statusCode(200);
-    Optional<Campaign> simpsons = campaignRepository.findByIdIgnoreCase("SIMPSONS2020X00");
-    assertEquals(true, simpsons.isPresent());
-    assertEquals(170849200000L, simpsons.get().getEndDate());
-  }
-  
-  /**
-	 * Test that the PUT endpoint "api/campaign/{id}/collection-dates"
-	 * return 400 when empty body
-	 * @throws InterruptedException
-	 */
-	@Test
-	@Order(27)
-	void testPutCollectionDatesEmptyBody() throws InterruptedException, JsonProcessingException, JSONException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "abc", "a");
-		 given().auth().oauth2(accessToken)
-		 	.contentType("application/json")
-			.body("{}")
-		.when()
-			.put("api/campaign/SIMPSONS2020X00/collection-dates")
-		.then()
-      .statusCode(400);
-  }
-  
-  /**
-	 * Test that the PUT endpoint "api/campaign/{id}/collection-dates"
-	 * return 400 when bad format
-	 * @throws InterruptedException
-	 */
-	@Test
-	@Order(28)
-	void testPutCollectionDatesBadFormat() throws InterruptedException, JsonProcessingException, JSONException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "abc", "a");
-		 given().auth().oauth2(accessToken)
-		 	.contentType("application/json")
-			.body("{\"startDate\": 162849200000, \"endDate\": \"23/05/2020\"}")
-		.when()
-			.put("api/campaign/SIMPSONS2020X00/collection-dates")
-		.then()
-      .statusCode(400);
   }
 
 	/**
@@ -2162,50 +2055,7 @@ class TestAuthKeyCloak {
 		assertTrue(!interv1Opt.isPresent());
 	}
 	
-	/**
-	 * Test that the POST endpoint
-	 * "/geographical-locations returns 200
-	 * @throws JsonProcessingException 
-	 * @throws JSONException 
-	 * @throws InterruptedException
-	 */
-	@Test
-	@Order(109)
-	void testPostGeographicalLocations() throws JsonProcessingException, JSONException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "abc", "a");
-		GeographicalLocationDto gl = new GeographicalLocationDto();
-		gl.setId("test");
-		gl.setLabel("test");
-		given()
-		.auth().oauth2(accessToken)
-		.contentType(ContentType.JSON)
-		.body(new ObjectMapper().writeValueAsString(List.of(gl)))
-		.post("api/geographical-locations")
-		.then().statusCode(200);
-		Assert.assertTrue(geographicalLocationRepository.findById("test").isPresent());
-	}
-	
-	/**
-	 * Test that the POST endpoint
-	 * "/geographical-locations with error returns 400
-	 * @throws JsonProcessingException 
-	 * @throws JSONException 
-	 * @throws InterruptedException
-	 */
-	@Test
-	@Order(110)
-	void testPostGeographicalLocationsError() throws JsonProcessingException, JSONException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "abc", "a");
-		GeographicalLocationDto gl = new GeographicalLocationDto();
-		gl.setId("");
-		gl.setLabel("test");
-		given()
-		.auth().oauth2(accessToken)
-		.contentType(ContentType.JSON)
-		.body(new ObjectMapper().writeValueAsString(List.of(gl)))
-		.post("api/geographical-locations")
-		.then().statusCode(400);
-	}
+		
 	
 	/**
 	 * Test that the POST endpoint
@@ -2221,7 +2071,6 @@ class TestAuthKeyCloak {
 		SurveyUnitContextDto su = new SurveyUnitContextDto();
 		su.setId("8");
 		su.setCampaign("SIMPSONS2020X00");
-		su.setGeographicalLocationId("test");
 		su.setOrganizationUnitId("OU-NORTH");
 		su.setPriority(true);
 		AddressDto addr = new AddressDto();
@@ -2260,12 +2109,11 @@ class TestAuthKeyCloak {
 	 */
 	@Test
 	@Order(112)
-	void testPostSurveyUnitsDuplcateInDB() throws JsonProcessingException, JSONException {
+	void testPostSurveyUnitsDuplicateInDB() throws JsonProcessingException, JSONException {
 		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "abc", "a");
 		SurveyUnitContextDto su = new SurveyUnitContextDto();
 		su.setId("8");
 		su.setCampaign("SIMPSONS2020X00");
-		su.setGeographicalLocationId("test");
 		su.setOrganizationUnitId("OU-NORTH");
 		su.setPriority(true);
 		AddressDto addr = new AddressDto();
@@ -2309,7 +2157,6 @@ class TestAuthKeyCloak {
 		SurveyUnitContextDto su = new SurveyUnitContextDto();
 		su.setId("9");
 		su.setCampaign("SIMPSONS2020X00");
-		su.setGeographicalLocationId("test");
 		su.setOrganizationUnitId("OU-NORTH");
 		su.setPriority(true);
 		AddressDto addr = new AddressDto();
@@ -2352,7 +2199,6 @@ class TestAuthKeyCloak {
 		SurveyUnitContextDto su = new SurveyUnitContextDto();
 		su.setId("9");
 		su.setCampaign("SIMPSONS2020X00");
-		su.setGeographicalLocationId("test");
 		su.setOrganizationUnitId("OU-TEST");
 		su.setPriority(true);
 		AddressDto addr = new AddressDto();
@@ -2395,7 +2241,6 @@ class TestAuthKeyCloak {
 		SurveyUnitContextDto su = new SurveyUnitContextDto();
 		su.setId("9");
 		su.setCampaign("campaignTest");
-		su.setGeographicalLocationId("test");
 		su.setOrganizationUnitId("OU-NORTH");
 		su.setPriority(true);
 		AddressDto addr = new AddressDto();
@@ -2424,49 +2269,7 @@ class TestAuthKeyCloak {
 		.then().statusCode(400);
 	}
 	
-	/**
-	 * Test that the POST endpoint
-	 * "/survey-units returns 400 when GeographicalLocationId does not exist
-	 * @throws JsonProcessingException 
-	 * @throws JSONException 
-	 * @throws InterruptedException
-	 */
-	@Test
-	@Order(116)
-	void testPostSurveyUnitsGeogrphicalLocationNotExist() throws JsonProcessingException, JSONException {
-		String accessToken = resourceOwnerLogin(CLIENT, CLIENT_SECRET, "abc", "a");
-		SurveyUnitContextDto su = new SurveyUnitContextDto();
-		su.setId("9");
-		su.setCampaign("SIMPSONS2020X00");
-		su.setGeographicalLocationId("testtest");
-		su.setOrganizationUnitId("OU-NORTH");
-		su.setPriority(true);
-		AddressDto addr = new AddressDto();
-		addr.setL1("Test test");
-		addr.setL2("1 rue test");
-		addr.setL3("TEST");
-		su.setAddress(addr);
-		List<PersonDto> lstPerson = new ArrayList<>();
-		PersonDto p = new PersonDto();
-		p.setFirstName("test");
-		p.setLastName("test");
-		p.setEmail("test@test.com");
-		p.setFavoriteEmail(true);
-		p.setBirthdate(1564656540L);
-		p.setPrivileged(true);
-		p.setTitle(Title.MISTER);
-		p.setPhoneNumbers(List.of(new PhoneNumberDto(Source.FISCAL, true, "+33666666666")));
-		lstPerson.add(p);
-		su.setPersons(lstPerson);
-		su.setSampleIdentifiers(new SampleIdentifiersDto(0, "0", 0, 0, 0, 0, 0, 0, 0, "0", "0"));
-		given()
-		.auth().oauth2(accessToken)
-		.contentType(ContentType.JSON)
-		.body(new ObjectMapper().writeValueAsString(List.of(su)))
-		.post("api/survey-units")
-		.then().statusCode(400);
-	}
-	
+
 	
 	/**
 	 * Test that the POST endpoint
@@ -2482,7 +2285,6 @@ class TestAuthKeyCloak {
 		SurveyUnitContextDto su = new SurveyUnitContextDto();
 		su.setId("");
 		su.setCampaign("SIMPSONS2020X00");
-		su.setGeographicalLocationId("test");
 		su.setOrganizationUnitId("OU-NORTH");
 		su.setPriority(true);
 		AddressDto addr = new AddressDto();
@@ -3088,7 +2890,6 @@ class TestAuthKeyCloak {
 		SurveyUnitContextDto su = new SurveyUnitContextDto();
 		su.setId(suId);
 		su.setCampaign("SIMPSONS2020X00");
-		su.setGeographicalLocationId("32221");
 		su.setOrganizationUnitId("OU-NORTH");
 		su.setPriority(true);
 		AddressDto addr = new AddressDto();

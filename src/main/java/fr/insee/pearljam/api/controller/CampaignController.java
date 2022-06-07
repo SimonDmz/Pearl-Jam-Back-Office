@@ -26,7 +26,6 @@ import fr.insee.pearljam.api.domain.Response;
 import fr.insee.pearljam.api.domain.SurveyUnit;
 import fr.insee.pearljam.api.dto.campaign.CampaignContextDto;
 import fr.insee.pearljam.api.dto.campaign.CampaignDto;
-import fr.insee.pearljam.api.dto.campaign.CollectionDatesDto;
 import fr.insee.pearljam.api.dto.campaign.OngoingDto;
 import fr.insee.pearljam.api.dto.count.CountDto;
 import fr.insee.pearljam.api.dto.interviewer.InterviewerDto;
@@ -262,28 +261,6 @@ public class CampaignController {
 		LOGGER.info("Get numberSUAbandoned resulting in 200");
 		return new ResponseEntity<>(nbSUNotAttributed, HttpStatus.OK);
 
-	}
-
-	/**
-	 * Updates the collection start and end dates for a campaign
-	 * 
-	 * @body CampaignDto
-	 * @param id
-	 * @return {@link HttpStatus}
-	 */
-	@ApiOperation(value = "Put campaignCollectionDates")
-	@PutMapping(path = "/api/campaign/{id}/collection-dates")
-	public ResponseEntity<Object> putCampaignsCollectionDates(HttpServletRequest request,
-			@PathVariable(value = "id") String id, @RequestBody CollectionDatesDto campaign) {
-		String userId = utilsService.getUserId(request);
-		if (StringUtils.isBlank(userId)) {
-			LOGGER.info("Can't find caller Id");
-			return new ResponseEntity<>("Can't find caller Id", HttpStatus.FORBIDDEN);
-		} else {
-			HttpStatus returnCode = campaignService.updateDates(userId, id, campaign);
-			LOGGER.info("PUT campaignCollectionDates with id {} resulting in {}", id, returnCode.value());
-			return new ResponseEntity<>(returnCode);
-		}
 	}
 
 	/**

@@ -37,17 +37,7 @@ public class Campaign implements Serializable {
 	*/
 	@Column(length=255)
 	private String label;
-	
-	/**
-	 * The start date of the Campaign
-	 */
-	private Long startDate;
-	
-	/**
-	 * The end date of the Campaign
-	 */
-	private Long endDate;
-	
+
 	/**
 	 * The reference to visibility table
 	 */
@@ -90,34 +80,6 @@ public class Campaign implements Serializable {
 	 */
 	public void setLabel(String label) {
 		this.label = label;
-	}
-
-	/**
-	 * @return the start date of the Campaign
-	 */
-	public Long getStartDate() {
-		return startDate;
-	}
-
-	/**
-	 * @param start date of the Campaign
-	 */
-	public void setStartDate(Long startDate) {
-		this.startDate = startDate;
-	}
-
-	/**
-	 * @return the end date of the Campaign
-	 */
-	public Long getEndDate() {
-		return endDate;
-	}
-
-	/**
-	 * @param end date of the Campaign
-	 */
-	public void setEndDate(Long endDate) {
-		this.endDate = endDate;
 	}
 
 	/**
