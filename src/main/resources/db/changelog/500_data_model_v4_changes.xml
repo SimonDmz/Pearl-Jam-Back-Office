@@ -40,9 +40,9 @@
     <changeSet author="SimonDmz" id="1654257284987-6">
         <addColumn tableName="campaign">
             <column name="email" type="varchar(50)" />
-            <column name="identification_config" type="varchar(50)" />
-            <column name="contact_attempt_config" type="varchar(50)" />
-            <column name="contact_outcome_config" type="varchar(50)" />
+            <column name="identification_configuration" type="varchar(50)" />
+            <column name="contact_attempt_configuration" type="varchar(50)" />
+            <column name="contact_outcome_configuration" type="varchar(50)" />
         </addColumn>
     </changeSet>
     <changeSet author="SimonDmz" id="1654257284987-7">
