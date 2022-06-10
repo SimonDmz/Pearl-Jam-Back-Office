@@ -75,4 +75,6 @@ public interface CampaignService {
     boolean isCampaignOngoing(String id);
 
 	List<VisibilityContextDto> findAllVisiblitiesByCampaign(String campaignId);
+
+	void persistReferents(CampaignContextDto campaignDto, Campaign campaign);
 }

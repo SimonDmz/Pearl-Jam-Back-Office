@@ -44,12 +44,12 @@ public interface CampaignRepository extends JpaRepository<Campaign, String> {
 			+ "WHERE ou.id ILIKE ?1", nativeQuery = true)
 	List<String> findIdsByOuId(String ouId);
 
-	@Query(value = "SELECT new fr.insee.pearljam.api.dto.campaign.CampaignDto(camp.id, camp.label) " 
+	@Query(value = "SELECT new fr.insee.pearljam.api.dto.campaign.CampaignDto(camp.id, camp.label, camp.email, camp.identification_config, camp.contact_outcome_config, camp.contact_attempt_config) " 
 			+ "FROM Campaign camp " 
 			+ "WHERE camp.id=?1")
 	CampaignDto findDtoById(String id);
 
-	@Query(value = "SELECT new fr.insee.pearljam.api.dto.campaign.CampaignDto(camp.id, camp.label) " 
+	@Query(value = "SELECT new fr.insee.pearljam.api.dto.campaign.CampaignDto(camp.id, camp.label, camp.email, camp.identification_config, camp.contact_outcome_config, camp.contact_attempt_config) " 
 			+ "FROM Campaign camp")
 	List<CampaignDto> findAllDto();
 

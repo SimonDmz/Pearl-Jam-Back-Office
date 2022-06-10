@@ -16,6 +16,7 @@ import fr.insee.pearljam.api.dto.address.AddressDto;
 import fr.insee.pearljam.api.dto.comment.CommentDto;
 import fr.insee.pearljam.api.dto.contactattempt.ContactAttemptDto;
 import fr.insee.pearljam.api.dto.contactoutcome.ContactOutcomeDto;
+import fr.insee.pearljam.api.dto.identification.IdentificationDto;
 import fr.insee.pearljam.api.dto.person.PersonDto;
 import fr.insee.pearljam.api.dto.sampleidentifier.SampleIdentifiersDto;
 import fr.insee.pearljam.api.dto.state.StateDto;
@@ -32,6 +33,7 @@ public class SurveyUnitDetailDto {
 	private List<StateDto> states;
 	private List<ContactAttemptDto> contactAttempts;
 	private ContactOutcomeDto contactOutcome;
+	private IdentificationDto identification;
 
 	public SurveyUnitDetailDto() {
 	}
@@ -57,6 +59,7 @@ public class SurveyUnitDetailDto {
 				.filter(s -> BussinessRules.stateCanBeSeenByInterviewerBussinessRules(s.getType()))
 				.map(s -> new StateDto(s))
 				.collect(Collectors.toList());
+		this.identification = new IdentificationDto(surveyUnit.getIdentification());
 	}
 
 	/**
@@ -194,6 +197,20 @@ public class SurveyUnitDetailDto {
 	public void setPersons(List<PersonDto> persons) {
 		this.persons = persons;
 	}
+
+
+	public Boolean isPriority() {
+		return this.priority;
+	}
+
+	public IdentificationDto getIdentification() {
+		return this.identification;
+	}
+
+	public void setIdentification(IdentificationDto identification) {
+		this.identification = identification;
+	}
+
 	
 	
 	@Override
@@ -205,6 +222,7 @@ public class SurveyUnitDetailDto {
 				+ ", comments=" + comments
 				+ ", sampleIdentifiers=" + sampleIdentifiers 
 				+ ", states=" + states
+				+ ", identification=" + identification
 				+ ", contactAttempts=" + contactAttempts 
 				+ ", contactOutcome=" + contactOutcome + "]";
 	}

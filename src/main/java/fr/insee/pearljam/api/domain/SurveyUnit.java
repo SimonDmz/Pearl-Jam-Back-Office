@@ -65,7 +65,7 @@ public class SurveyUnit implements Serializable {
 	private SampleIdentifier sampleIdentifier;
 	
 	/**
-	 * The sampleIdentifier of SurveyUnit
+	 * The contactOutcome of SurveyUnit
 	 */
 	@OneToOne(fetch = FetchType.LAZY, targetEntity = ContactOutcome.class, cascade = CascadeType.ALL, mappedBy = "surveyUnit", orphanRemoval = true)
 	private ContactOutcome contactOucome;
@@ -73,6 +73,10 @@ public class SurveyUnit implements Serializable {
 	
 	@OneToOne(fetch = FetchType.LAZY, targetEntity = ClosingCause.class, cascade = CascadeType.ALL, mappedBy = "surveyUnit", orphanRemoval = true)
 	private ClosingCause closingCause;
+
+	@OneToOne(fetch = FetchType.LAZY, targetEntity = Identification.class, cascade = CascadeType.ALL, mappedBy = "surveyUnit", orphanRemoval = true)
+	private Identification identification;
+
 
 	/**
 	 * The Campaign of SurveyUnit
@@ -368,6 +372,24 @@ public class SurveyUnit implements Serializable {
 		}
 		return false;
 	}
+
+	public boolean getPriority() {
+		return this.priority;
+	}
+
+
+	public Boolean isViewed() {
+		return this.viewed;
+	}
+
+	public Identification getIdentification() {
+		return this.identification;
+	}
+
+	public void setIdentification(Identification identification) {
+		this.identification = identification;
+	}
+
 
 	public Boolean isLastState(String state) {
 		State lastState = new State();

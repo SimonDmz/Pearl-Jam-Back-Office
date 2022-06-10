@@ -336,11 +336,11 @@ public class CampaignController {
 
 		if (StringUtils.isBlank(callerId)) {
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-		} else {
-			HttpStatus returnCode = campaignService.updateCampaign(id, campaign);
-			LOGGER.info("PUT campaignCollectionDates with id {} resulting in {}", id, returnCode.value());
-			return new ResponseEntity<>(returnCode);
 		}
+		HttpStatus returnCode = campaignService.updateCampaign(id, campaign);
+		LOGGER.info("PUT campaignCollectionDates with id {} resulting in {}", id, returnCode.value());
+		return new ResponseEntity<>(returnCode);
+
 	}
 
 	/**

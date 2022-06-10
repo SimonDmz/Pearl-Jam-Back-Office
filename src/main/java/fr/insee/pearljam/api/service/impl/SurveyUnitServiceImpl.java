@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fr.insee.pearljam.api.bussinessrules.BussinessRules;
 import fr.insee.pearljam.api.constants.Constants;
 import fr.insee.pearljam.api.dto.comment.CommentDto;
+import fr.insee.pearljam.api.dto.identification.IdentificationDto;
 import fr.insee.pearljam.api.dto.organizationunit.OrganizationUnitDto;
 import fr.insee.pearljam.api.dto.person.PersonDto;
 import fr.insee.pearljam.api.dto.state.StateDto;
@@ -37,6 +38,7 @@ import fr.insee.pearljam.api.dto.surveyunit.SurveyUnitOkNokDto;
 import fr.insee.pearljam.api.exception.BadRequestException;
 import fr.insee.pearljam.api.exception.NotFoundException;
 import fr.insee.pearljam.api.exception.SurveyUnitException;
+import fr.insee.pearljam.api.service.IdentificationService;
 import fr.insee.pearljam.api.service.SurveyUnitService;
 import fr.insee.pearljam.api.service.UserService;
 import fr.insee.pearljam.api.service.UtilsService;
@@ -96,6 +98,9 @@ public class SurveyUnitServiceImpl implements SurveyUnitService {
 
 	@Autowired
 	ClosingCauseRepository closingCauseRepository;
+
+	@Autowired
+	IdentificationService identificationService;
 
 	@Autowired
 	UserService userService;
@@ -200,10 +205,25 @@ public class SurveyUnitServiceImpl implements SurveyUnitService {
 		updateStates(surveyUnit, surveyUnitDetailDto);
 		updateContactAttempt(surveyUnit, surveyUnitDetailDto);
 		updateContactOutcome(surveyUnit, surveyUnitDetailDto);
+		updateIdentification(surveyUnit,surveyUnitDetailDto);
 		surveyUnitRepository.save(surveyUnit);
 		LOGGER.info("Survey Unit {} updated",id);
 		SurveyUnitDetailDto updatedSurveyUnit = new SurveyUnitDetailDto(surveyUnitRepository.findById(id).get());
 		return new ResponseEntity<>(updatedSurveyUnit, HttpStatus.OK);
+	}
+
+	private void updateIdentification(SurveyUnit surveyUnit, SurveyUnitDetailDto surveyUnitDetailDto) {
+		if (surveyUnitDetailDto.getIdentification() != null) {
+			Identification identification = identificationService.findBySurveyUnitId(surveyUnit.getId());
+			IdentificationDto identDto = surveyUnitDetailDto.getIdentification();
+			identification.setIdentification(identDto.getIdentification());
+			identification.setAccess(identDto.getAccess());
+			identification.setSituation(identDto.getSituation());
+			identDto.setCategory(identDto.getCategory());
+			identification.setOccupant(identDto.getOccupant());
+			identification.setMove(identDto.isMove());
+		}
+		LOGGER.info("Identification updated");
 	}
 
 	private void updateContactOutcome(SurveyUnit surveyUnit, SurveyUnitDetailDto surveyUnitDetailDto) {
