@@ -61,7 +61,10 @@ import fr.insee.pearljam.api.domain.ClosingCause;
 import fr.insee.pearljam.api.domain.ClosingCauseType;
 import fr.insee.pearljam.api.domain.Comment;
 import fr.insee.pearljam.api.domain.CommentType;
+import fr.insee.pearljam.api.domain.ContactAttemptConfiguration;
+import fr.insee.pearljam.api.domain.ContactOutcomeConfiguration;
 import fr.insee.pearljam.api.domain.ContactOutcomeType;
+import fr.insee.pearljam.api.domain.IdentificationConfiguration;
 import fr.insee.pearljam.api.domain.Interviewer;
 import fr.insee.pearljam.api.domain.Message;
 import fr.insee.pearljam.api.domain.MessageStatusType;
@@ -76,6 +79,7 @@ import fr.insee.pearljam.api.domain.User;
 import fr.insee.pearljam.api.domain.Visibility;
 import fr.insee.pearljam.api.dto.address.AddressDto;
 import fr.insee.pearljam.api.dto.campaign.CampaignContextDto;
+import fr.insee.pearljam.api.dto.campaign.CampaignDto;
 import fr.insee.pearljam.api.dto.comment.CommentDto;
 import fr.insee.pearljam.api.dto.contactattempt.ContactAttemptDto;
 import fr.insee.pearljam.api.dto.contactoutcome.ContactOutcomeDto;
@@ -442,8 +446,11 @@ class TestAuthKeyCloak {
 				.assertThat().body("toReview", hasItem(0)).and()
 				.assertThat().body("finalized", hasItem(0)).and()
 				.assertThat().body("toProcessInterviewer", hasItem(0)).and()
-				.assertThat().body("preference", hasItem(true));
-		// TODO : compléter avec email et configurations
+				.assertThat().body("preference", hasItem(true)).and()
+				.assertThat().body("email", hasItem("first.email@test.com")).and()
+				.assertThat().body("identificationConfiguration", hasItem("IASCO")).and()
+				.assertThat().body("contactAttemptConfiguration", hasItem("F2F")).and()
+				.assertThat().body("contactOutcomeConfiguration", hasItem("F2F"));
 
 		// Testing dates
 		assertTrue(testingDates("managementStartDate",
@@ -2888,6 +2895,10 @@ class TestAuthKeyCloak {
 
 		// 200
 		campaignContext.setVisibilities(List.of(wvcd, svcd));
+		campaignContext.setEmail("updated.email@test.com");
+		campaignContext.setContactAttemptConfiguration(ContactAttemptConfiguration.TEL);
+		campaignContext.setContactOutcomeConfiguration(ContactOutcomeConfiguration.TEL);
+		campaignContext.setIdentificationConfiguration(IdentificationConfiguration.NOIDENT);
 		given().auth().oauth2(accessToken)
 				.contentType("application/json")
 				.body(new ObjectMapper().writeValueAsString(campaignContext))
@@ -2895,6 +2906,11 @@ class TestAuthKeyCloak {
 				.then().statusCode(200);
 		assertEquals(wvcd.getEndDate(),
 				visibilityRepository.findVisibilityByCampaignIdAndOuId("ZCLOSEDX00", "OU-WEST").get().getEndDate());
+		CampaignDto updatedCampaign = campaignRepository.findDtoById("ZCLOSEDX00");
+				assertEquals("updated.email@test.com", updatedCampaign.getEmail());		
+		assertEquals(ContactAttemptConfiguration.TEL, updatedCampaign.getContactAttemptConfiguration());		
+		assertEquals(ContactOutcomeConfiguration.TEL, updatedCampaign.getContactOutcomeConfiguration());		
+		assertEquals(IdentificationConfiguration.NOIDENT, updatedCampaign.getIdentificationConfiguration());		
 	}
 
 	@Test

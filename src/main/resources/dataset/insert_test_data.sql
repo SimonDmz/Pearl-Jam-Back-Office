@@ -35,9 +35,9 @@ INSERT INTO public."user" (id, first_name, last_name, organization_unit_id) VALU
 INSERT INTO public."user" (id, first_name, last_name, organization_unit_id) VALUES ('MNO', 'Ted', 'Kannt', 'OU-WEST');
 
 INSERT INTO public.campaign (id, label, email, identification_configuration, contact_attempt_configuration, contact_outcome_configuration) VALUES ('SIMPSONS2020X00', 'Survey on the Simpsons tv show 2020', 'first.email@test.com', 'IASCO', 'F2F', 'F2F');
-INSERT INTO public.campaign (id, label, email, identification_configuration, contact_attempt_configuration, contact_outcome_configuration) VALUES ('VQS2021X00', 'Everyday life and health survey 2021', 'first.email@test.com', 'IASCO', 'TEL', 'TEL');
-INSERT INTO public.campaign (id, label, email, identification_configuration, contact_attempt_configuration, contact_outcome_configuration) VALUES ('ZCLOSEDX00', 'Everyday life and health survey 2021', 'first.email@test.com', 'IASCO', 'F2F', 'F2F');
-INSERT INTO public.campaign (id, label, email, identification_configuration, contact_attempt_configuration, contact_outcome_configuration) VALUES ('XCLOSEDX00', 'Everyday life and health survey 2021', 'first.email@test.com', 'IASCO', 'TEL', 'TEL');
+INSERT INTO public.campaign (id, label, email, identification_configuration, contact_attempt_configuration, contact_outcome_configuration) VALUES ('VQS2021X00', 'Everyday life and health survey 2021', 'second.email@test.com', 'IASCO', 'TEL', 'TEL');
+INSERT INTO public.campaign (id, label, email, identification_configuration, contact_attempt_configuration, contact_outcome_configuration) VALUES ('ZCLOSEDX00', 'Everyday life and health survey 2021', 'third.email@test.com', 'IASCO', 'F2F', 'F2F');
+INSERT INTO public.campaign (id, label, email, identification_configuration, contact_attempt_configuration, contact_outcome_configuration) VALUES ('XCLOSEDX00', 'Everyday life and health survey 2021', 'fourth.email@test.com', 'IASCO', 'TEL', 'TEL');
 
 INSERT INTO public.preference (id_user, id_campaign) VALUES ('GHI', 'SIMPSONS2020X00');
 INSERT INTO public.preference (id_user, id_campaign) VALUES ('JKL', 'SIMPSONS2020X00');
