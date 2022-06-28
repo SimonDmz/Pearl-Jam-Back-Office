@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
@@ -26,23 +25,25 @@ import java.util.stream.StreamSupport;
 @EnableJpaRepositories(basePackageClasses = SurveyUnitRepository.class)
 public class ApiApplication extends SpringBootServletInitializer{
 	private static final Logger LOG = LoggerFactory.getLogger(ApiApplication.class);
-	
+
 	@Autowired
     private DataSetInjectorServiceImpl injector;
-	
-	@Value("${spring.profiles.active}")
-    private String profile;
+
+	@Value("${fr.insee.pearljam.application.initdata:true}")
+    private boolean initData;
 
 	public static void main(String[] args) {
-		System.out.println(System.getProperty("catalina.base"));
-		SpringApplication app = new SpringApplication(ApiApplication.class);
-		app.addListeners((ApplicationEnvironmentPreparedEvent event)->propertiesLog(event.getEnvironment()));
-		app.run(args);
+		configureApplicationBuilder(new SpringApplicationBuilder()).build().run(args);
 	}
-	
+
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(ApiApplication.class);
+		return configureApplicationBuilder(application);
+	}
+
+	private static SpringApplicationBuilder configureApplicationBuilder(SpringApplicationBuilder springApplicationBuilder){
+		return springApplicationBuilder.sources(ApiApplication.class)
+				.listeners((ApplicationEnvironmentPreparedEvent event)->propertiesLog(event.getEnvironment()));
 	}
 
 
@@ -63,9 +64,9 @@ public class ApiApplication extends SpringBootServletInitializer{
 	
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() {
-	    if(profile.contains("dev") && !profile.contains("test")) {
-	    	injector.createDataSet();
-	    }
+		if (initData)
+			injector.createDataSet();
+			injector.updateDataSetDates();
 	}
 
 }

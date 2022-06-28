@@ -28,7 +28,7 @@ import fr.insee.pearljam.api.service.InterviewerService;
 import fr.insee.pearljam.api.service.SurveyUnitService;
 import fr.insee.pearljam.api.service.UserService;
 import fr.insee.pearljam.api.service.UtilsService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -56,7 +56,7 @@ public class InterviewerController {
 	 * @return List of {@link Interviewer} if exist, {@link HttpStatus} NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Post interviewers")
+	@Operation(summary = "Post interviewers")
 	@PostMapping(path = "/interviewers")
 	public ResponseEntity<String> postInterviewers(HttpServletRequest request, @RequestBody List<InterviewerContextDto> interviewers) {
 		Response response = interviewerService.createInterviewers(interviewers);
@@ -73,7 +73,7 @@ public class InterviewerController {
 	 * @return List of {@link Interviewer} if exist, {@link HttpStatus} NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get interviewers")
+	@Operation(summary = "Get interviewers")
 	@GetMapping(path = "/interviewers")
 	public ResponseEntity<Set<InterviewerDto>> getListInterviewers(HttpServletRequest request) {
 		String userId = utilsService.getUserId(request);
@@ -91,7 +91,7 @@ public class InterviewerController {
 	}
 
     
-	@ApiOperation(value = "Get interviewer campaigns")
+	@Operation(summary = "Get interviewer campaigns")
 	@GetMapping(path = "/interviewer/{id}/campaigns")
 	public ResponseEntity<List<CampaignDto>> getListCampaigns(HttpServletRequest request, @PathVariable(value = "id") String id) {
 		String userId = utilsService.getUserId(request);

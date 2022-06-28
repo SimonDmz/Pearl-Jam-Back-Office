@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.insee.pearljam.api.service.DataSetInjectorService;
 import fr.insee.pearljam.api.service.UtilsService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 
 @RestController
@@ -25,7 +25,7 @@ public class DataSetController {
 	@Autowired
 	UtilsService utilsService;
 	
-	@ApiOperation(value = "Create dataset")
+	@Operation(summary = "Create dataset")
 	@PostMapping(path = "/create-dataset")
 	public ResponseEntity<Object> createDataSet() {
 		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {
@@ -35,7 +35,7 @@ public class DataSetController {
 		return new ResponseEntity<>(status);
 	}
 	
-	@ApiOperation(value = "Delete dataset")
+	@Operation(summary = "Delete dataset")
 	@DeleteMapping(path = "/delete-dataset")
 	public ResponseEntity<Object> deteteDataSet() {
 		if(!utilsService.isDevProfile() && !utilsService.isTestProfile()) {

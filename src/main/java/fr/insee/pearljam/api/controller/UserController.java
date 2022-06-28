@@ -1,5 +1,7 @@
 package fr.insee.pearljam.api.controller;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,10 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.insee.pearljam.api.dto.organizationunit.OrganizationUnitDto;
 import fr.insee.pearljam.api.dto.user.UserDto;
 import fr.insee.pearljam.api.exception.NotFoundException;
+import fr.insee.pearljam.api.service.MessageService;
 import fr.insee.pearljam.api.service.OrganizationUnitService;
+import fr.insee.pearljam.api.service.PreferenceService;
 import fr.insee.pearljam.api.service.UserService;
 import fr.insee.pearljam.api.service.UtilsService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -37,6 +41,12 @@ public class UserController {
 	UserService userService;
 	
 	@Autowired
+	MessageService messageService;
+	
+	@Autowired
+	PreferenceService preferenceService;
+	
+	@Autowired
 	OrganizationUnitService organizationUnitService;
 
 	/**
@@ -46,7 +56,7 @@ public class UserController {
 	 * @return List of {@link UserDto} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get User")
+	@Operation(summary = "Get User")
 	@GetMapping(path = "/user")
 	public ResponseEntity<UserDto> getUser(HttpServletRequest request) {
 		String userId = utilsService.getUserId(request);
@@ -74,7 +84,7 @@ public class UserController {
 	 * @return List of {@link UserDto} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get User by id")
+	@Operation(summary = "Get User by id")
 	@GetMapping(path = "/user/{id}")
 	public ResponseEntity<UserDto> getUserById(HttpServletRequest request, @PathVariable(value = "id") String id) {
 		String userId = utilsService.getUserId(request);
@@ -100,7 +110,7 @@ public class UserController {
 	 * 
 	 * @param request
 	 */
-	@ApiOperation(value = "Create User")
+	@Operation(summary = "Create User")
 	@PostMapping(path = "/user")
 	public ResponseEntity<Object> createUser(HttpServletRequest request, @RequestBody UserDto user ) {
 		String callerId = utilsService.getUserId(request);
@@ -136,7 +146,7 @@ public class UserController {
 	 * 
 	 * @param request
 	 */
-	@ApiOperation(value = "Update User")
+	@Operation(summary = "Update User")
 	@PutMapping(path = "/user/{id}")
 	public ResponseEntity<Object> updateUser(HttpServletRequest request, @PathVariable(value = "id") String id,
 			@RequestBody UserDto user) {
@@ -172,7 +182,7 @@ public class UserController {
 	 * 
 	 * @param request
 	 */
-	@ApiOperation(value = "Assign User to Organization Unit")
+	@Operation(summary = "Assign User to Organization Unit")
 	@PutMapping(path = "/user/{userId}/organization-unit/{ouId}")
 	public ResponseEntity<Object> assignUserToOU(HttpServletRequest request,
 			@PathVariable(value = "userId") String userId, @PathVariable(value = "ouId") String ouId) {
@@ -212,7 +222,7 @@ public class UserController {
 	 * 
 	 * @param request
 	 */
-	@ApiOperation(value = "Delete User")
+	@Operation(summary = "Delete User")
 	@DeleteMapping(path = "/user/{id}")
 	public ResponseEntity<Object> deleteUser(HttpServletRequest request, @PathVariable(value = "id") String id) {
 		String callerId = utilsService.getUserId(request);
@@ -223,9 +233,10 @@ public class UserController {
 			LOGGER.warn(noFoundUser);
 			return new ResponseEntity<>(noFoundUser, HttpStatus.NOT_FOUND);
 		}
-
+		messageService.deleteMessageByUserId(id);
+		preferenceService.setPreferences(new ArrayList<>(),id);
 		HttpStatus response = userService.delete(id);
-		LOGGER.info("{} : DELETE User {} resulting in {}",callerId, id, response.value());
+		LOGGER.info("{} : DELETE User {} resulting in {}", callerId, id, response.value());
 		return new ResponseEntity<>(response);
 	}
 }

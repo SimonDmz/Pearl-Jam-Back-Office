@@ -1,6 +1,7 @@
 package fr.insee.pearljam.api.controller;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthCheckController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HealthCheckController.class);
 
-	@ApiOperation(value = "Healthcheck, check if api is alive")
+	@Operation(summary = "Healthcheck, check if api is alive")
 	@GetMapping(path = "/healthcheck")
 	public ResponseEntity<Object> healthCheck() {
 		LOGGER.debug("HealthCheck");

@@ -37,7 +37,11 @@ import fr.insee.pearljam.api.exception.NotFoundException;
 import fr.insee.pearljam.api.exception.VisibilityException;
 import fr.insee.pearljam.api.service.CampaignService;
 import fr.insee.pearljam.api.service.UtilsService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @RestController
 public class CampaignController {
@@ -56,7 +60,13 @@ public class CampaignController {
 	 * @return List of {@link SurveyUnit} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Post Campaign")
+	// @ApiResponses(value = { 
+	// 	@ApiResponse(responseCode = "200", description = "Campaign created", 
+	// 	  content = { @Content(mediaType = "application/json", 
+	// 		schema = @Schema(implementation = CampaignContextDto.class)) }),
+	// 	@ApiResponse(responseCode = "400", description = "Invalid id supplied", 
+	// 	  content = @Content)})
+	@Operation(summary = "Post Campaign")
 	@PostMapping(path = "/api/campaign")
 	public ResponseEntity<Object> postCampaign(HttpServletRequest request,
 			@RequestBody CampaignContextDto campaignDto) {
@@ -77,7 +87,7 @@ public class CampaignController {
 	 * @return List of {@link CampaignDto} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get user related Campaigns")
+	@Operation(summary = "Get user related Campaigns")
 	@GetMapping(path = "/api/campaigns")
 	public ResponseEntity<List<CampaignDto>> getListCampaign(HttpServletRequest request) {
 		String userId = utilsService.getUserId(request);
@@ -97,7 +107,7 @@ public class CampaignController {
 	 * @return List of {@link CampaignDto} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get Campaigns")
+	@Operation(summary = "Get Campaigns")
 	@GetMapping(path = "/api/admin/campaigns")
 	public ResponseEntity<List<CampaignDto>> getAllCampaigns(HttpServletRequest request) {
 		String userId = utilsService.getUserId(request);
@@ -119,7 +129,7 @@ public class CampaignController {
 	 * @return List of {@link CampaignDto} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get interviewer related Campaigns")
+	@Operation(summary = "Get interviewer related Campaigns")
 	@GetMapping(path = "/api/interviewer/campaigns")
 	public ResponseEntity<List<CampaignDto>> getInterviewerCampaigns(HttpServletRequest request) {
 		String userId = utilsService.getUserId(request);
@@ -143,7 +153,7 @@ public class CampaignController {
 	 * @return List of {@link Interviewer} if exist, {@link HttpStatus} NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get interviewers")
+	@Operation(summary = "Get interviewers")
 	@GetMapping(path = "/api/campaign/{id}/interviewers")
 	public ResponseEntity<List<InterviewerDto>> getListInterviewers(HttpServletRequest request,
 			@PathVariable(value = "id") String id) {
@@ -177,7 +187,7 @@ public class CampaignController {
 	 *         NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get campaign visibilities")
+	@Operation(summary = "Get campaign visibilities")
 	@GetMapping(path = "/api/campaign/{id}/visibilities")
 	public ResponseEntity<List<VisibilityContextDto>> getVisibilities(HttpServletRequest request,
 			@PathVariable(value = "id") String id) {
@@ -210,7 +220,7 @@ public class CampaignController {
 	 * @return {@link StateCountCampaignDto} if exist, {@link HttpStatus} NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get numberSUAbandoned")
+	@Operation(summary = "Get numberSUAbandoned")
 	@GetMapping(path = "/api/campaign/{id}/survey-units/abandoned")
 	public ResponseEntity<CountDto> getNbSUAbandoned(HttpServletRequest request,
 			@PathVariable(value = "id") String id) {
@@ -241,7 +251,7 @@ public class CampaignController {
 	 * @return {@link StateCountCampaignDto} if exist, {@link HttpStatus} NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get numberSUNotAttributed")
+	@Operation(summary = "Get numberSUNotAttributed")
 	@GetMapping(path = "/api/campaign/{id}/survey-units/not-attributed")
 	public ResponseEntity<CountDto> getNbSUNotAttributed(HttpServletRequest request,
 			@PathVariable(value = "id") String id) {
@@ -270,7 +280,7 @@ public class CampaignController {
 	 * @param idCampaign
 	 * @param idOu
 	 */
-	@ApiOperation(value = "Change visibility of a campaign for an Organizational Unit")
+	@Operation(summary = "Change visibility of a campaign for an Organizational Unit")
 	@PutMapping(path = "/api/campaign/{idCampaign}/organizational-unit/{idOu}/visibility")
 	public ResponseEntity<Object> putVisibilityDate(HttpServletRequest request,
 			@RequestBody VisibilityDto visibilityUpdated, @PathVariable(value = "idCampaign") String idCampaign,
@@ -296,7 +306,7 @@ public class CampaignController {
 	* @return {@link HttpStatus}
 	* 
 	*/
-	@ApiOperation(value = "Delete a campaign")
+	@Operation(summary = "Delete a campaign")
 	@DeleteMapping(path = "/api/campaign/{id}")
 	public ResponseEntity<Object> deleteCampaignById(HttpServletRequest request, @PathVariable(value = "id") String id,
 			@RequestParam(required = false) boolean force) {
@@ -327,7 +337,7 @@ public class CampaignController {
 	 * @param id
 	 * @return {@link HttpStatus}
 	 */
-	@ApiOperation(value = "Put campaignCollectionDates")
+	@Operation(summary = "Put campaignCollectionDates")
 	@PutMapping(path = "/api/campaign/{id}")
 	public ResponseEntity<Object> putCampaign(HttpServletRequest request,
 			@PathVariable(value = "id") String id, @RequestBody CampaignContextDto campaign) {
@@ -351,7 +361,7 @@ public class CampaignController {
 	 * @return {@link OngoingDto} , {@link HttpStatus} NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Check if campaign is on-going")
+	@Operation(summary = "Check if campaign is on-going")
 	@GetMapping(path = "/campaigns/{id}/ongoing")
 	public ResponseEntity<OngoingDto> isOngoing(HttpServletRequest request,
 			@PathVariable(value = "id") String id) {

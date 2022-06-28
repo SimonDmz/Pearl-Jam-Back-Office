@@ -26,7 +26,7 @@ import fr.insee.pearljam.api.exception.UserAlreadyExistsException;
 import fr.insee.pearljam.api.service.OrganizationUnitService;
 import fr.insee.pearljam.api.service.UserService;
 import fr.insee.pearljam.api.service.UtilsService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -49,7 +49,7 @@ public class OrganizationUnitController {
 	 * @param idCampaign
 	 * @param idOu
 	 */
-	@ApiOperation(value = "Create Context with Organizational Unit and users associated")
+	@Operation(summary = "Create Context with Organizational Unit and users associated")
 	@PostMapping(path = "/organization-units")
 	public ResponseEntity<Object> postContext(HttpServletRequest request, @RequestBody List<OrganizationUnitContextDto> organizationUnits){
 
@@ -69,7 +69,7 @@ public class OrganizationUnitController {
 	 * @return List of {@link SurveyUnit} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Create Organizational Unit and users associated")
+	@Operation(summary = "Create Organizational Unit and users associated")
 	@PostMapping(path = "/organization-unit")
 	public ResponseEntity<Object> postOrganizationUnit(HttpServletRequest request,
 			@RequestBody OrganizationUnitContextDto organizationUnit) {
@@ -95,7 +95,7 @@ public class OrganizationUnitController {
 	 * @param idCampaign
 	 * @param idOu
 	 */
-	@ApiOperation(value = "Create users by organization-unit")
+	@Operation(summary = "Create users by organization-unit")
 	@PostMapping(path = "/organization-unit/{id}/users")
 	public ResponseEntity<Object> postUsersByOrganizationUnit(HttpServletRequest request, @PathVariable(value = "id") String id, @RequestBody List<UserContextDto> users){
 
@@ -116,7 +116,7 @@ public class OrganizationUnitController {
 	 * @param idCampaign
 	 * @param idOu
 	 */
-	@ApiOperation(value = "Get all organization-units")
+	@Operation(summary = "Get all organization-units")
 	@GetMapping(path = "/organization-units")
 	public ResponseEntity<List<OrganizationUnitContextDto>> getOrganizationUnits(HttpServletRequest request){
 		return new ResponseEntity<>(organizationUnitService.findAllOrganizationUnits(), HttpStatus.OK);
@@ -129,7 +129,7 @@ public class OrganizationUnitController {
 	 * @param idCampaign
 	 * @param idOu
 	 */
-	@ApiOperation(value = "Delete an organization-unit")
+	@Operation(summary = "Delete an organization-unit")
 	@DeleteMapping(path = "/organization-unit/{id}")
 	public ResponseEntity<Object> deleteOrganizationUnit(HttpServletRequest request, @PathVariable(value = "id") String id){
 		HttpStatus response = organizationUnitService.delete(id);

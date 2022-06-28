@@ -27,7 +27,7 @@ import fr.insee.pearljam.api.dto.message.MessageDto;
 import fr.insee.pearljam.api.dto.message.VerifyNameResponseDto;
 import fr.insee.pearljam.api.service.MessageService;
 import fr.insee.pearljam.api.service.UtilsService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @Controller
 @RequestMapping(path = "/api")
@@ -51,7 +51,7 @@ public class MessageController {
 	/**
 	* This method is used to post a message
 	*/
-	@ApiOperation(value = "Post a message")
+	@Operation(summary = "Post a message")
 	@PostMapping(path = "/message")
 	public ResponseEntity<Object> postMessage(HttpServletRequest request, @RequestBody MessageDto message) {
 		String userId = utilsService.getUserId(request);
@@ -75,7 +75,7 @@ public class MessageController {
 	/**
 	* This method is used to mark a message as read with id: {id} as read for the interviewer {idep}
 	*/
-	@ApiOperation(value = "Mark a message as read")
+	@Operation(summary = "Mark a message as read")
 	@PutMapping(path = "/message/{id}/interviewer/{idep}/read")
 	public ResponseEntity<Object> postMessage(HttpServletRequest request, @PathVariable(value = "id") Long id, @PathVariable(value = "idep") String idep) {
 		String userId = utilsService.getUserId(request);
@@ -93,7 +93,7 @@ public class MessageController {
 	/**
 	* This method is used to mark a message as deleted with id: {id} as read for the interviewer {idep}
 	*/
-	@ApiOperation(value = "Mark a message as deleted")
+	@Operation(summary = "Mark a message as deleted")
 	@PutMapping(path = "/message/{id}/interviewer/{idep}/delete")
 	public ResponseEntity<Object> postDeletedMessage(HttpServletRequest request, @PathVariable(value = "id") Long id, @PathVariable(value = "idep") String idep) {
 		String userId = utilsService.getUserId(request);
@@ -111,7 +111,7 @@ public class MessageController {
 	/**
 	* Retrieves messages sent to the interviewer with id {id}
 	*/
-	@ApiOperation(value = "Get a message")
+	@Operation(summary = "Get a message")
 	@GetMapping(path = "/messages/{id}")
 	public ResponseEntity<List<MessageDto>> getMessages(HttpServletRequest request, @PathVariable(value = "id") String id) {
 		String userId = utilsService.getUserId(request);
@@ -126,7 +126,7 @@ public class MessageController {
 	/**
 	* Retrieves message history
 	*/
-	@ApiOperation(value = "Get the message history")
+	@Operation(summary = "Get the message history")
 	@GetMapping(path = "/message-history")
 	public ResponseEntity<List<MessageDto>> getMessageHistory(HttpServletRequest request) {
 		String userId = utilsService.getUserId(request);
@@ -141,7 +141,7 @@ public class MessageController {
 	/**
 	* Retrieves matching interviewers and campaigns
 	*/
-	@ApiOperation(value = "Update Messages with campaigns or interviewers listed in request body")
+	@Operation(summary = "Update Messages with campaigns or interviewers listed in request body")
 	@PostMapping(path = "/verify-name")
 	public ResponseEntity<Object> postMessage(HttpServletRequest request, @RequestBody WsText name) {
 		String userId = utilsService.getUserId(request);
@@ -161,7 +161,7 @@ public class MessageController {
 	/**
 	* This method is used to post a mail
 	*/
-	@ApiOperation(value = "Post a mail to admins")
+	@Operation(summary = "Post a mail to admins")
 	@PostMapping(path = "/mail")
 	public ResponseEntity<Object> postMailMessage(HttpServletRequest request, @RequestBody MailDto mail) {
 		String userId = utilsService.getUserId(request);

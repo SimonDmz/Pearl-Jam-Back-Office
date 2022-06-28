@@ -21,7 +21,7 @@ import fr.insee.pearljam.api.dto.state.StateCountDto;
 import fr.insee.pearljam.api.exception.NotFoundException;
 import fr.insee.pearljam.api.service.ClosingCauseService;
 import fr.insee.pearljam.api.service.UtilsService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -45,7 +45,7 @@ public class ClosingCauseController {
 	 * @return {@link StateCountDto} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get interviewerStateCount")
+	@Operation(summary = "Get interviewerStateCount")
 	@GetMapping(path = "/campaign/{id}/survey-units/interviewer/{idep}/closing-causes")
 	public ResponseEntity<ClosingCauseCountDto> getClosingCauseCount(HttpServletRequest request,
 			@PathVariable(value = "id") String id, @PathVariable(value = "idep") String idep,

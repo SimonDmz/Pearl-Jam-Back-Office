@@ -22,7 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import fr.insee.pearljam.api.configuration.ApplicationProperties;
+import fr.insee.pearljam.api.configuration.SecurityMode;
 import fr.insee.pearljam.api.constants.Constants;
 import fr.insee.pearljam.api.domain.User;
 import fr.insee.pearljam.api.dto.surveyunit.SurveyUnitOkNokDto;
@@ -39,9 +39,6 @@ public class UtilsServiceImpl implements UtilsService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UtilsServiceImpl.class);
 
 	@Autowired
-	ApplicationProperties applicationProperties;
-
-	@Autowired
 	InterviewerRepository interviewerRepository;
 
 	@Autowired
@@ -55,37 +52,40 @@ public class UtilsServiceImpl implements UtilsService {
 
 	@Autowired
 	UserService userService;
-	
+
 	@Autowired
 	Environment environment;
-	
+
 	@Value("${fr.insee.pearljam.datacollection.service.url.scheme:#{null}}")
 	private String dataCollectionScheme;
-	
+
 	@Value("${fr.insee.pearljam.datacollection.service.url.host:#{null}}")
 	private String dataCollectionHost;
-	
+
 	@Value("${fr.insee.pearljam.datacollection.service.url.port:#{null}}")
 	private String dataCollectionPort;
 
+	@Value("${fr.insee.pearljam.application.mode:noauth}")
+	private SecurityMode mode;
+
 	public String getUserId(HttpServletRequest request) {
 		String userId = null;
-		switch (applicationProperties.getMode()) {
-		case basic:
-			Object basic = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			if (basic instanceof UserDetails) {
-				userId = ((UserDetails) basic).getUsername();
-			} else {
-				userId = basic.toString();
-			}
-			break;
-		case keycloak:
-			KeycloakAuthenticationToken keycloak = (KeycloakAuthenticationToken) request.getUserPrincipal();
-			userId = keycloak.getPrincipal().toString();
-			break;
-		default:
-      userId = Constants.GUEST;
-			break;
+		switch (mode) {
+			case basic:
+				Object basic = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+				if (basic instanceof UserDetails) {
+					userId = ((UserDetails) basic).getUsername();
+				} else {
+					userId = basic.toString();
+				}
+				break;
+			case keycloak:
+				KeycloakAuthenticationToken keycloak = (KeycloakAuthenticationToken) request.getUserPrincipal();
+				userId = keycloak.getPrincipal().toString();
+				break;
+			default:
+				userId = Constants.GUEST;
+				break;
 		}
 		return userId;
 	}
@@ -110,7 +110,8 @@ public class UtilsServiceImpl implements UtilsService {
 			l.add("GUEST");
 		} else if (user.isPresent()) {
 			l.add(user.get().getOrganizationUnit().getId());
-			List<String> organizationUnitIds = organizationUnitRepository.findChildrenId(user.get().getOrganizationUnit().getId());
+			List<String> organizationUnitIds = organizationUnitRepository
+					.findChildrenId(user.get().getOrganizationUnit().getId());
 			l.addAll(organizationUnitIds);
 			for (String idOrg : organizationUnitIds) {
 				l.addAll(organizationUnitRepository.findChildrenId(idOrg));
@@ -135,25 +136,28 @@ public class UtilsServiceImpl implements UtilsService {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public boolean isDevProfile() {
 		for (final String profileName : environment.getActiveProfiles()) {
-	        if("dev".equals(profileName)) return true;
-	    }   
-	    return false;
+			if ("dev".equals(profileName))
+				return true;
+		}
+		return false;
 	}
-	
+
 	@Override
 	public boolean isTestProfile() {
 		for (final String profileName : environment.getActiveProfiles()) {
-	        if("test".equals(profileName)) return true;
-	    }   
-	    return false;
+			if ("test".equals(profileName))
+				return true;
+		}
+		return false;
 	}
-	
+
 	@Override
-	public ResponseEntity<SurveyUnitOkNokDto> getQuestionnairesStateFromDataCollection(HttpServletRequest request, List<String> ids){
+	public ResponseEntity<SurveyUnitOkNokDto> getQuestionnairesStateFromDataCollection(HttpServletRequest request,
+			List<String> ids) {
 		final StringBuilder uriPilotageFilter = new StringBuilder(dataCollectionScheme)
 				.append("://")
 				.append(dataCollectionHost)
@@ -165,6 +169,7 @@ public class UtilsServiceImpl implements UtilsService {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.set(Constants.AUTHORIZATION, authTokenHeader);
-		return restTemplate.exchange(uriPilotageFilter.toString(), HttpMethod.POST, new HttpEntity<>(ids, headers), SurveyUnitOkNokDto.class);
+		return restTemplate.exchange(uriPilotageFilter.toString(), HttpMethod.POST, new HttpEntity<>(ids, headers),
+				SurveyUnitOkNokDto.class);
 	}
 }

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.insee.pearljam.api.service.PreferenceService;
 import fr.insee.pearljam.api.service.UtilsService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -38,7 +38,7 @@ public class PreferenceController {
 	 * @param listPreference
 	 * @return
 	 */
-	@ApiOperation(value = "Update preferences with campaigns listed in request body")
+	@Operation(summary = "Update preferences with campaigns listed in request body")
 	@PutMapping(path = "/preferences")
 	public ResponseEntity<Object> updateSurveyUnit(HttpServletRequest request, @RequestBody List<String> listPreference) {
 		String userId = utilsService.getUserId(request);

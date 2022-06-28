@@ -39,7 +39,7 @@ import fr.insee.pearljam.api.exception.NotFoundException;
 import fr.insee.pearljam.api.exception.SurveyUnitException;
 import fr.insee.pearljam.api.service.SurveyUnitService;
 import fr.insee.pearljam.api.service.UtilsService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 /**
  * SurveyUnitController is the Controller managing {@link SurveyUnit}
@@ -80,7 +80,7 @@ public class SurveyUnitController {
 	 * @return List of {@link SurveyUnit} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "POST SurveyUnit assignations to interviewer")
+	@Operation(summary = "POST SurveyUnit assignations to interviewer")
 	@PostMapping(path = "/survey-units")
 	public ResponseEntity<Object> postSurveyUnits(HttpServletRequest request, @RequestBody List<SurveyUnitContextDto> surveyUnits) {
 
@@ -95,7 +95,7 @@ public class SurveyUnitController {
 	 * @return List of {@link SurveyUnit} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Post SurveyUnits")
+	@Operation(summary = "Post SurveyUnits")
 	@PostMapping(path = "/survey-units/interviewers")
 	public ResponseEntity<Object> postSurveyUnitInterviewerLinks(HttpServletRequest request,
 			@RequestBody List<SurveyUnitInterviewerLinkDto> surveyUnits,
@@ -112,7 +112,7 @@ public class SurveyUnitController {
 	 * @return List of {@link SurveyUnit} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get SurveyUnits")
+	@Operation(summary = "Get SurveyUnits")
 	@GetMapping(path = "/survey-units")
 	public ResponseEntity<List<SurveyUnitDto>> getListSurveyUnit(HttpServletRequest request, @RequestParam(value = "extended", defaultValue = "false", required = false) Boolean extended) {
 		String userId = utilsService.getUserId(request);
@@ -136,7 +136,7 @@ public class SurveyUnitController {
 	 * @return List of {@link SurveyUnit} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get detail of specific survey unit ")
+	@Operation(summary = "Get detail of specific survey unit ")
 	@GetMapping(path = "/survey-unit/{id}")
 	public ResponseEntity<SurveyUnitDetailDto> getSurveyUnitById(HttpServletRequest request, @PathVariable(value = "id") String id) {
 		String userId = utilsService.getUserId(request);
@@ -174,7 +174,7 @@ public class SurveyUnitController {
 	 * @param id
 	 * @return {@link HttpStatus}
 	 */
-	@ApiOperation(value = "Update the Survey Unit")
+	@Operation(summary = "Update the Survey Unit")
 	@PutMapping(path = "/survey-unit/{id}")
 	public ResponseEntity<SurveyUnitDetailDto> updateSurveyUnit(HttpServletRequest request,
 			@RequestBody SurveyUnitDetailDto surveyUnitUpdated, @PathVariable(value = "id") String id) {
@@ -192,7 +192,7 @@ public class SurveyUnitController {
 	/**
 	 * This method is used to post a survey-unit by id to a temp-zone
 	 */
-	@ApiOperation(value = "Post survey-unit to temp-zone")
+	@Operation(summary = "Post survey-unit to temp-zone")
 	@PostMapping(path = "/survey-unit/{id}/temp-zone")
 	public ResponseEntity<Object> postSurveyUnitByIdInTempZone(@RequestBody JsonNode surveyUnit, HttpServletRequest request, @PathVariable(value = "id") String id) {
 		String userId = utilsService.getUserId(request);
@@ -204,7 +204,7 @@ public class SurveyUnitController {
 	/**
 	 * This method is used to retrieve survey-units in temp-zone
 	 */
-	@ApiOperation(value = "GET all survey-units in temp-zone")
+	@Operation(summary = "GET all survey-units in temp-zone")
 	@GetMapping(path = "/survey-units/temp-zone")
 	public ResponseEntity<Object> getSurveyUnitsInTempZone() {
 		List<SurveyUnitTempZone> surveyUnitTempZones = surveyUnitService.getAllSurveyUnitTempZone();
@@ -221,7 +221,7 @@ public class SurveyUnitController {
 	 * @param state
 	 * @return {@link HttpStatus}
 	 */
-	@ApiOperation(value = "Update the state of Survey Units listed in request body")
+	@Operation(summary = "Update the state of Survey Units listed in request body")
 	@PutMapping(path = "/survey-unit/{id}/state/{state}")
 	public ResponseEntity<Object> updateSurveyUnitState(HttpServletRequest request,
 			@PathVariable(value = "id") String surveyUnitId, @PathVariable(value = "state") StateType state) {
@@ -245,7 +245,7 @@ public class SurveyUnitController {
 	 * @param closingCause
 	 * @return {@link HttpStatus}
 	 */
-	@ApiOperation(value = "Closes a survey unit")
+	@Operation(summary = "Closes a survey unit")
 	@PutMapping(path = "/survey-unit/{id}/close/{closingCause}")
 	public ResponseEntity<Object> closeSurveyUnit(HttpServletRequest request,
 			@PathVariable(value = "id") String surveyUnitId, @PathVariable(value = "closingCause") ClosingCauseType closingCause) {
@@ -269,7 +269,7 @@ public class SurveyUnitController {
 	 * @param closingCause
 	 * @return {@link HttpStatus}
 	 */
-	@ApiOperation(value = "Add Closing cause")
+	@Operation(summary = "Add Closing cause")
 	@PutMapping(path = "/survey-unit/{id}/closing-cause/{closingCause}")
 	public ResponseEntity<Object> updateClosingCause(HttpServletRequest request,
 			@PathVariable(value = "id") String surveyUnitId, @PathVariable(value = "closingCause") ClosingCauseType closingCause) {
@@ -292,7 +292,7 @@ public class SurveyUnitController {
 	 * @param state
 	 * @return {@link HttpStatus}
 	 */
-	@ApiOperation(value = "Update the state of Survey Units listed in request body")
+	@Operation(summary = "Update the state of Survey Units listed in request body")
 	@PutMapping(path = "/survey-unit/{id}/comment")
 	public ResponseEntity<Object> updateSurveyUnitComment(HttpServletRequest request,
 			@RequestBody CommentDto comment, @PathVariable(value = "id") String surveyUnitId) {
@@ -307,7 +307,7 @@ public class SurveyUnitController {
 		}
 	}
 	
-	@ApiOperation(value = "Update the state of Survey Units listed in request body")
+	@Operation(summary = "Update the state of Survey Units listed in request body")
 	@PutMapping(path = "/survey-unit/{id}/viewed")
 	public ResponseEntity<Object> updateSurveyUnitViewed(HttpServletRequest request, @PathVariable(value = "id") String surveyUnitId) {
 		String userId = utilsService.getUserId(request);
@@ -330,7 +330,7 @@ public class SurveyUnitController {
 	 * @return list of {@link SurveyUnitCampaignDto} if exists, else
 	 *         {@link HttpStatus} FORBIDDEN or NOT_FOUND
 	 */
-	@ApiOperation(value = "Update the Survey Unit")
+	@Operation(summary = "Update the Survey Unit")
 	@GetMapping(path = "/campaign/{id}/survey-units")
 	public ResponseEntity<Set<SurveyUnitCampaignDto>> getSurveyUnitByCampaignId(HttpServletRequest request,
 			@PathVariable(value = "id") String id, @RequestParam(value = "state", required = false) String state) {
@@ -352,7 +352,7 @@ public class SurveyUnitController {
   /**
 	 * This method is used to check if a user has access to an SU
 	 */
-	@ApiOperation(value = "Check habilitation")
+	@Operation(summary = "Check habilitation")
 	@GetMapping(path = "/check-habilitation")
 	public ResponseEntity<HabilitationDto> checkHabilitation(HttpServletRequest request,
 			@RequestParam(value = "id", required = true) String id,
@@ -399,7 +399,7 @@ public class SurveyUnitController {
 	 * @return List of {@link StateDto} if exists, else {@link HttpStatus} FORBIDDEN
 	 *         or NOT_FOUND
 	 */
-	@ApiOperation(value = "Get states of given survey unit")
+	@Operation(summary = "Get states of given survey unit")
 	@GetMapping(path = "/survey-unit/{id}/states")
 	public ResponseEntity<SurveyUnitStatesDto> getStatesBySurveyUnitId(HttpServletRequest request,
 			@PathVariable(value = "id") String id) {
@@ -426,7 +426,7 @@ public class SurveyUnitController {
 	 * @return List of {@link StateDto} if exists, else {@link HttpStatus} FORBIDDEN
 	 *         or NOT_FOUND
 	 */
-	@ApiOperation(value = "Get closable survey units")
+	@Operation(summary = "Get closable survey units")
 	@GetMapping(path = "/survey-units/closable")
 	public ResponseEntity<List<SurveyUnitCampaignDto>> getClosableSurveyUnits(HttpServletRequest request) {
 		String userId = utilsService.getUserId(request);
@@ -446,7 +446,7 @@ public class SurveyUnitController {
 	* @param id the id of survey-unit
 	* @return {@link HttpStatus}
 	*/
-	@ApiOperation(value = "Delete survey-unit")
+	@Operation(summary = "Delete survey-unit")
 	@DeleteMapping(path = "/survey-unit/{id}")
 	public ResponseEntity<Object> deleteSurveyUnit(HttpServletRequest request, @PathVariable(value = "id") String id){
 		Optional<SurveyUnit> surveyUnitOptional = surveyUnitService.findById(id);

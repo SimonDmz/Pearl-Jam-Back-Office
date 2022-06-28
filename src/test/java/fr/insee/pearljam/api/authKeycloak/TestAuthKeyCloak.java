@@ -25,7 +25,6 @@ import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,22 +32,13 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -108,6 +98,8 @@ import fr.insee.pearljam.api.repository.OrganizationUnitRepository;
 import fr.insee.pearljam.api.repository.SurveyUnitRepository;
 import fr.insee.pearljam.api.repository.UserRepository;
 import fr.insee.pearljam.api.repository.VisibilityRepository;
+import fr.insee.pearljam.api.service.MessageService;
+import fr.insee.pearljam.api.service.PreferenceService;
 import fr.insee.pearljam.api.service.SurveyUnitService;
 import fr.insee.pearljam.api.service.UserService;
 import io.restassured.RestAssured;
@@ -117,10 +109,7 @@ import liquibase.Liquibase;
 import liquibase.exception.LiquibaseException;
 
 /* Test class for Keycloak Authentication */
-@ExtendWith(SpringExtension.class)
-@ActiveProfiles({ "test" })
-@ContextConfiguration(initializers = { TestAuthKeyCloak.Initializer.class })
-@Testcontainers
+// @ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
 		"fr.insee.pearljam.application.mode = keycloak" })
@@ -131,6 +120,12 @@ class TestAuthKeyCloak {
 
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	MessageService messageService;
+
+	@Autowired
+	PreferenceService preferenceService;
 
 	@Autowired
 	UserRepository userRepository;
@@ -227,9 +222,6 @@ class TestAuthKeyCloak {
 	 */
 	@AfterAll
 	public static void cleanUp() {
-		if (postgreSQLContainer != null) {
-			postgreSQLContainer.close();
-		}
 		if (keycloak != null) {
 			keycloak.close();
 		}
@@ -241,26 +233,8 @@ class TestAuthKeyCloak {
 		}
 	}
 
-	/**
-	 * Defines the configuration of the PostgreSqlContainer
-	 */
-	@SuppressWarnings("rawtypes")
-	@Container
-	@ClassRule
-	public static PostgreSQLContainer postgreSQLContainer = (PostgreSQLContainer) new PostgreSQLContainer("postgres")
-			.withDatabaseName("pearljam").withUsername("pearljam").withPassword("pearljam");
 
-	public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-		public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-			TestPropertyValues
-					.of("spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
-							"spring.datasource.username=" + postgreSQLContainer.getUsername(),
-							"spring.datasource.password=" + postgreSQLContainer.getPassword(),
-							"keycloak.auth-server-url=" + keycloak.getAuthServerUrl())
-					.applyTo(configurableApplicationContext.getEnvironment());
-		}
-	}
-
+	
 	/**
 	 * This method is use to check if the dates are correct
 	 * 
@@ -2625,7 +2599,11 @@ class TestAuthKeyCloak {
 				.stream().forEach(su -> surveyUnitRepository.delete(su));
 		// delete all Users before delete OU
 		userRepository.findAllByOrganizationUnitId("OU-NORTH")
-				.stream().forEach(u -> userService.delete(u.getId()));
+				.stream().forEach(u -> {
+					messageService.deleteMessageByUserId(u.getId());
+					preferenceService.setPreferences(new ArrayList<>(), u.getId());
+					userService.delete(u.getId());
+				});
 
 		given().auth().oauth2(accessToken)
 				.when().delete("api/organization-unit/OU-NORTH")

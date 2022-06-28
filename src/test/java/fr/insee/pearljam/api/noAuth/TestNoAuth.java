@@ -17,28 +17,16 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.junit.Assert;
-import org.junit.ClassRule;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,10 +41,7 @@ import liquibase.Liquibase;
 import liquibase.exception.LiquibaseException;
 
 /* Test class for no Authentication */
-@ExtendWith(SpringExtension.class)
-@ActiveProfiles({ "test" })
-@ContextConfiguration(initializers = { TestNoAuth.Initializer.class })
-@Testcontainers
+// @ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties= {"fr.insee.pearljam.application.mode = noauth"})
 class TestNoAuth {
@@ -85,39 +70,7 @@ class TestNoAuth {
 		RestAssured.port = port;
 		post("api/create-dataset");
 	}
-	
-	
-	/**
-	 * This method is used to kill the container
-	 */
-	@AfterAll
-	public static void  cleanUp() {
-		if(postgreSQLContainer!=null) {
-			postgreSQLContainer.close();
-		}
-	}
 
-	/**
-	 * Defines the configuration of the PostgreSqlContainer
-	 */
-	@SuppressWarnings("rawtypes")
-	@Container
-	@ClassRule
-	public static PostgreSQLContainer postgreSQLContainer = (PostgreSQLContainer) new PostgreSQLContainer("postgres")
-			.withDatabaseName("pearljam").withUsername("pearljam").withPassword("pearljam");
-
-	
-	public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-		public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-			TestPropertyValues
-					.of("spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
-							"spring.datasource.username=" + postgreSQLContainer.getUsername(),
-							"spring.datasource.password=" + postgreSQLContainer.getPassword())
-					.applyTo(configurableApplicationContext.getEnvironment());
-		}
-	}
-	
-	
 	/**
 	 * This method is use to check if the dates are correct
 	 * @param dateType

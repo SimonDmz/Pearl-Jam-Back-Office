@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import fr.insee.pearljam.api.configuration.ApplicationProperties;
-import fr.insee.pearljam.api.configuration.ApplicationProperties.Mode;
+import fr.insee.pearljam.api.configuration.SecurityMode;
 import fr.insee.pearljam.api.constants.Constants;
 import fr.insee.pearljam.api.domain.OrganizationUnit;
 import fr.insee.pearljam.api.domain.Response;
@@ -27,8 +27,6 @@ import fr.insee.pearljam.api.exception.UserAlreadyExistsException;
 import fr.insee.pearljam.api.repository.CampaignRepository;
 import fr.insee.pearljam.api.repository.OrganizationUnitRepository;
 import fr.insee.pearljam.api.repository.UserRepository;
-import fr.insee.pearljam.api.service.MessageService;
-import fr.insee.pearljam.api.service.PreferenceService;
 import fr.insee.pearljam.api.service.UserService;
 
 /**
@@ -44,64 +42,61 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	UserRepository userRepository;
-	
-	@Autowired
-	CampaignRepository campaignRepository;
-	
-	@Autowired
-	OrganizationUnitRepository ouRepository;
-	
-	@Autowired
-	MessageService messageService;
-	
-	@Autowired
-	UserService userService;
-	
-	@Autowired
-	PreferenceService preferenceService;
-	
 
 	@Autowired
-	ApplicationProperties applicationProperties;
+	CampaignRepository campaignRepository;
+
+	@Autowired
+	OrganizationUnitRepository ouRepository;
+
+	@Value("${fr.insee.pearljam.application.mode:noauth}")
+	private SecurityMode mode;
+	
+	@Value("${fr.insee.pearljam.application.guestOU}")
+	private String guestOU;
+
 
 	public UserDto getUser(String userId) throws NotFoundException {
 		List<OrganizationUnitDto> organizationUnits = new ArrayList<>();
-		if (applicationProperties.getMode() != Mode.noauth) {
+		if (mode != SecurityMode.noauth) {
 			Optional<User> user = userRepository.findByIdIgnoreCase(userId);
-			
+
 			OrganizationUnitDto organizationUnitsParent = new OrganizationUnitDto();
 			if (user.isPresent()) {
 				organizationUnitsParent.setId(user.get().getOrganizationUnit().getId());
 				organizationUnitsParent.setLabel(user.get().getOrganizationUnit().getLabel());
 				getOrganizationUnits(organizationUnits, user.get().getOrganizationUnit(), false);
-					return new UserDto(user.get().getId(), user.get().getFirstName(), user.get().getLastName(),
-							organizationUnitsParent, organizationUnits);
+				return new UserDto(user.get().getId(), user.get().getFirstName(), user.get().getLastName(),
+						organizationUnitsParent, organizationUnits);
 			} else {
 				throw new NotFoundException(String.format("User %s does not exist in database", userId));
 			}
 		} else {
-			Optional<OrganizationUnit> ouNat = ouRepository.findByIdIgnoreCase(applicationProperties.getGuestOU());
-			if(ouNat.isPresent()) {
+			Optional<OrganizationUnit> ouNat = ouRepository.findByIdIgnoreCase(guestOU);
+			if (ouNat.isPresent()) {
 				getOrganizationUnits(organizationUnits, ouNat.get(), false);
-				Optional<OrganizationUnitDto> ou =  ouRepository.findDtoByIdIgnoreCase(applicationProperties.getGuestOU());
-				if(ou.isPresent()) {
-					return new UserDto("", "Guest", "",  ou.get(), organizationUnits);
+				Optional<OrganizationUnitDto> ou = ouRepository
+						.findDtoByIdIgnoreCase(guestOU);
+				if (ou.isPresent()) {
+					return new UserDto("", "Guest", "", ou.get(), organizationUnits);
 				}
 			}
-			return new UserDto("", "Guest", "",  new OrganizationUnitDto("OU-NORTH","Guest organizational unit"), List.of());
+			return new UserDto("", "Guest", "", new OrganizationUnitDto("OU-NORTH", "Guest organizational unit"),
+					List.of());
 		}
 	}
 
-	public boolean userIsPresent(String userId){
+	public boolean userIsPresent(String userId) {
 		return userRepository.findByIdIgnoreCase(userId).isPresent();
 	}
 
-	public void getOrganizationUnits(List<OrganizationUnitDto> organizationUnits, OrganizationUnit currentOu, boolean saveAllLevels) {
+	public void getOrganizationUnits(List<OrganizationUnitDto> organizationUnits, OrganizationUnit currentOu,
+			boolean saveAllLevels) {
 		List<OrganizationUnit> lstOu = organizationUnitRepository.findChildren(currentOu.getId());
-		if(lstOu.isEmpty()) {
+		if (lstOu.isEmpty()) {
 			organizationUnits.add(new OrganizationUnitDto(currentOu.getId(), currentOu.getLabel()));
-		}else {
-			if(saveAllLevels) {
+		} else {
+			if (saveAllLevels) {
 				organizationUnits.add(new OrganizationUnitDto(currentOu.getId(), currentOu.getLabel()));
 			}
 			for (OrganizationUnit ou : lstOu) {
@@ -109,47 +104,47 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 	}
-	
-	public List<OrganizationUnitDto> getUserOUs(String userId, boolean saveAllLevels){
+
+	public List<OrganizationUnitDto> getUserOUs(String userId, boolean saveAllLevels) {
 		List<OrganizationUnitDto> organizationUnits = new ArrayList<>();
 		if (!userId.equals(Constants.GUEST)) {
 			Optional<User> user = userRepository.findByIdIgnoreCase(userId);
 			if (user.isPresent()) {
-				userService.getOrganizationUnits(organizationUnits, user.get().getOrganizationUnit(), saveAllLevels);
+				getOrganizationUnits(organizationUnits, user.get().getOrganizationUnit(), saveAllLevels);
 			}
-	  }
-		else {
-			Optional<OrganizationUnit> ouNat = ouRepository.findByIdIgnoreCase(applicationProperties.getGuestOU());
-			if(ouNat.isPresent()) {
-				userService.getOrganizationUnits(organizationUnits, ouNat.get(), saveAllLevels);
+		} else {
+			Optional<OrganizationUnit> ouNat = ouRepository.findByIdIgnoreCase(guestOU);
+			if (ouNat.isPresent()) {
+				getOrganizationUnits(organizationUnits, ouNat.get(), saveAllLevels);
 			} else {
 				List<String> natOus = ouRepository.findNationalOUs();
 				if (!natOus.isEmpty()) {
 					Optional<OrganizationUnit> ou = ouRepository.findByIdIgnoreCase(natOus.get(0));
-					if(ou.isPresent()) {
-						userService.getOrganizationUnits(organizationUnits, ou.get(), saveAllLevels);
+					if (ou.isPresent()) {
+						getOrganizationUnits(organizationUnits, ou.get(), saveAllLevels);
 					}
 				}
 			}
 		}
-		
+
 		return organizationUnits;
 	}
-	
+
 	public boolean isUserAssocitedToCampaign(String campaignId, String userId) {
 		List<OrganizationUnitDto> lstUserOU = new ArrayList<>();
 		Optional<User> user = userRepository.findByIdIgnoreCase(userId);
-		if(!user.isPresent()) {
+		if (!user.isPresent()) {
 			return false;
 		}
 		getOrganizationUnits(lstUserOU, user.get().getOrganizationUnit(), true);
 		List<String> lstIdOUUser = lstUserOU.stream().map(OrganizationUnitDto::getId).collect(Collectors.toList());
-		List<String> lstIdOUCampaign = campaignRepository.findAllOrganistionUnitIdByCampaignId(campaignId);		
+		List<String> lstIdOUCampaign = campaignRepository.findAllOrganistionUnitIdByCampaignId(campaignId);
 		return !Collections.disjoint(lstIdOUUser, lstIdOUCampaign);
 	}
 
 	@Override
-	public Response createUsersByOrganizationUnit(List<UserContextDto> users, String organisationUnitId) throws UserAlreadyExistsException, NoOrganizationUnitException {
+	public Response createUsersByOrganizationUnit(List<UserContextDto> users, String organisationUnitId)
+			throws UserAlreadyExistsException, NoOrganizationUnitException {
 		for (UserContextDto user : users) {
 			Optional<User> userOpt = userRepository.findById(user.getId());
 			if (userOpt.isPresent()) {
@@ -169,12 +164,10 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public HttpStatus delete(String id) {
 		Optional<User> user = userRepository.findById(id);
-		if(!user.isPresent()) {
+		if (!user.isPresent()) {
 			return HttpStatus.NOT_FOUND;
 		}
 		// delete preference
-		preferenceService.setPreferences(new ArrayList<>(), user.get().getId());
-		messageService.deleteMessageByUserId(user.get().getId());
 		userRepository.delete(user.get());
 		return HttpStatus.OK;
 	}
@@ -192,7 +185,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto createUser(UserDto userToCreate) throws NotFoundException {
-		OrganizationUnit ou = organizationUnitRepository.getOne(userToCreate.getOrganizationUnit().getId());
+		OrganizationUnit ou = organizationUnitRepository.findById(userToCreate.getOrganizationUnit().getId()).get();
 		User user = new User(userToCreate.getId(), userToCreate.getFirstName(), userToCreate.getLastName(), ou);
 		userRepository.save(user);
 		return getUser(userToCreate.getId());

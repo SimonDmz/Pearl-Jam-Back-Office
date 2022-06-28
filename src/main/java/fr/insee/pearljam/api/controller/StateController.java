@@ -21,7 +21,7 @@ import fr.insee.pearljam.api.dto.state.StateCountDto;
 import fr.insee.pearljam.api.exception.NotFoundException;
 import fr.insee.pearljam.api.service.StateService;
 import fr.insee.pearljam.api.service.UtilsService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -45,7 +45,7 @@ public class StateController {
 	 * @return {@link StateCountDto} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get interviewerStateCount")
+	@Operation(summary = "Get interviewerStateCount")
 	@GetMapping(path = "/campaign/{id}/survey-units/interviewer/{idep}/state-count")
 	public ResponseEntity<StateCountDto> getInterviewerStateCount(HttpServletRequest request,
 			@PathVariable(value = "id") String id, @PathVariable(value = "idep") String idep,
@@ -78,7 +78,7 @@ public class StateController {
 	 * @return {@link StateCountDto} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get state count for non attributted SUs")
+	@Operation(summary = "Get state count for non attributted SUs")
 	@GetMapping(path = "/campaign/{id}/survey-units/not-attributed/state-count")
 	public ResponseEntity<StateCountDto> getNbSUNotAttributedStateCount(HttpServletRequest request,
 			@PathVariable(value = "id") String id, @RequestParam(required = false, name = "date") Long date) {
@@ -109,7 +109,7 @@ public class StateController {
 	 * @return {@link StateCountCampaignDto} if exist, {@link HttpStatus} NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get campaignStateCount")
+	@Operation(summary = "Get campaignStateCount")
 	@GetMapping(path = "/campaign/{id}/survey-units/state-count")
 	public ResponseEntity<StateCountCampaignDto> getCampaignStateCount(HttpServletRequest request,
 			@PathVariable(value = "id") String id, @RequestParam(required = false, name = "date") Long date) {
@@ -138,7 +138,7 @@ public class StateController {
 	 * @return {@link StateCountCampaignDto} if exist, {@link HttpStatus} NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get interviewersStateCount")
+	@Operation(summary = "Get interviewersStateCount")
 	@GetMapping(path = "/interviewers/survey-units/state-count")
 	public ResponseEntity<List<StateCountDto>> getInterviewersStateCount(HttpServletRequest request,
 			@RequestParam(required = false, name = "date") Long date) {
@@ -164,7 +164,7 @@ public class StateController {
 	 * @return {@link StateCountCampaignDto} if exist, {@link HttpStatus} NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get campaignStateCount")
+	@Operation(summary = "Get campaignStateCount")
 	@GetMapping(path = "/campaigns/survey-units/state-count")
 	public ResponseEntity<List<StateCountDto>> getCampaignsStateCount(HttpServletRequest request,
 			@RequestParam(required = false, name = "date") Long date) {

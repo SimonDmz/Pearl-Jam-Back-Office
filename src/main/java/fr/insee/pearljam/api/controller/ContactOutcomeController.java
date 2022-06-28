@@ -24,7 +24,7 @@ import fr.insee.pearljam.api.dto.state.StateCountDto;
 import fr.insee.pearljam.api.exception.NotFoundException;
 import fr.insee.pearljam.api.service.ContactOutcomeService;
 import fr.insee.pearljam.api.service.UtilsService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -46,7 +46,7 @@ public class ContactOutcomeController {
 	 * @return {@link StateCountDto} if exist, {@link HttpStatus} NOT_FOUND, or
 	 *         {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get Contact-outcomes count for non attributted SUs")
+	@Operation(summary = "Get Contact-outcomes count for non attributted SUs")
 	@GetMapping(path = "/campaign/{id}/survey-units/not-attributed/contact-outcomes")
 	public ResponseEntity<ContactOutcomeTypeCountDto> getNbSUNotAttributedContactOutcomes(HttpServletRequest request,
 			@PathVariable(value = "id") String id, @RequestParam(required = false, name = "date") Long date) {
@@ -75,7 +75,7 @@ public class ContactOutcomeController {
 	 * @return {@link StateCountCampaignDto} if exist, {@link HttpStatus} NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get campaignStateCount")
+	@Operation(summary = "Get campaignStateCount")
 	@GetMapping(path = "/campaigns/survey-units/contact-outcomes")
 	public ResponseEntity<List<ContactOutcomeTypeCountDto>> getCampaignsContactOutcomeTypeCount(HttpServletRequest request,
 			@RequestParam(required = false, name = "date") Long date) {
@@ -102,7 +102,7 @@ public class ContactOutcomeController {
 	 * @return {@link StateCountCampaignDto} if exist, {@link HttpStatus} NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get campaignStateCount")
+	@Operation(summary = "Get campaignStateCount")
 	@GetMapping(path = "/campaign/{id}/survey-units/contact-outcomes")
 	public ResponseEntity<ContactOutcomeTypeCountCampaignDto> getContactOutcomeTypeCountByCampaign(HttpServletRequest request,
 			@PathVariable(value = "id") String id, @RequestParam(required = false, name = "date") Long date) {
@@ -132,7 +132,7 @@ public class ContactOutcomeController {
 	 * @return List of {@link Interviewer} if exist, {@link HttpStatus} NOT_FOUND,
 	 *         or {@link HttpStatus} FORBIDDEN
 	 */
-	@ApiOperation(value = "Get contact-outcome type for an interviewer on a specific campaign")
+	@Operation(summary = "Get contact-outcome type for an interviewer on a specific campaign")
 	@GetMapping(path = "/campaign/{id}/survey-units/interviewer/{idep}/contact-outcomes")
 	public ResponseEntity<ContactOutcomeTypeCountDto> getContactOuctomeByCampaignAndInterviewer(HttpServletRequest request,
 			@PathVariable(value = "id") String id, @PathVariable(value = "idep") String idep,
