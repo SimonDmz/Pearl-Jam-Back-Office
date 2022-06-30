@@ -66,7 +66,7 @@ public class OpenApiConfiguration {
 
 	@Bean
 	@ConditionalOnProperty(name = "fr.insee.pearljam.application.mode", havingValue = "keycloak", matchIfMissing = true)
-	public OpenAPI keycloakOpenAPI() {
+	public OpenAPI customOpenAPI() {
 		final OpenAPI openapi = createOpenAPI();
 		System.out.println("Building an OpenApi for keycloak");
 		openapi.components(new Components().addSecuritySchemes(SCHEME_KEYCLOAK, new SecurityScheme()
@@ -90,9 +90,10 @@ public class OpenApiConfiguration {
 		};
 	}
 
-	@Bean
+	// @Bean
+	// move to another class to provide same Bean on different conditionalOnProperty
 	@ConditionalOnProperty(name = "fr.insee.pearljam.application.mode", havingValue = "noauth", matchIfMissing = true)
-	public OpenAPI customOpenAPI() {
+	public OpenAPI oupscustomOpenAPI() {
 		final OpenAPI openapi = createOpenAPI();
 		System.out.println("Building an OpenApi for noauth!!");
 		return openapi;

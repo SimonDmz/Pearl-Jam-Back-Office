@@ -72,6 +72,7 @@ public class UtilsServiceImpl implements UtilsService {
 		String userId = null;
 		switch (mode) {
 			case basic:
+			case oidc:
 				Object basic = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 				if (basic instanceof UserDetails) {
 					userId = ((UserDetails) basic).getUsername();
