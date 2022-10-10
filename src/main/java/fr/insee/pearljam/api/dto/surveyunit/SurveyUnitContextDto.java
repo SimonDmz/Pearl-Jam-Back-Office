@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import fr.insee.pearljam.api.domain.Identification;
 import fr.insee.pearljam.api.dto.address.AddressDto;
 import fr.insee.pearljam.api.dto.closingcause.ClosingCauseDto;
 import fr.insee.pearljam.api.dto.contactattempt.ContactAttemptDto;
@@ -26,6 +27,7 @@ public class SurveyUnitContextDto {
 	private List<ContactAttemptDto> contactAttempts;
 	private ContactOutcomeDto contactOutcome;
 	private ClosingCauseDto closingCause;
+	private Identification identification;
 
 	public SurveyUnitContextDto() {
 	}
@@ -198,6 +200,14 @@ public class SurveyUnitContextDto {
 	 */
 	public void setClosingCause(ClosingCauseDto closingCause) {
 		this.closingCause = closingCause;
+	}
+
+	public Identification getIdentification() {
+		return this.identification;
+	}
+
+	public void setIdentification(Identification identification) {
+		this.identification = identification;
 	}
 
 	/**
